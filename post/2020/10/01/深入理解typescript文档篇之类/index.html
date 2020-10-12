@@ -1,0 +1,272 @@
+<!doctype html><html lang=en-us><head><link rel=stylesheet href=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css><script src=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=manifest href=/images/site.webmanifest><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A simple, minimal blog for those who love text."><title>深入理解TypeScript——文档篇之类 | hackftz</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=https://hackftz.github.io/css/theme-override.css><header><nav><ul><li class=pull-left><a href=https://hackftz.github.io/>~/hackftz</a></li><li class=pull-left><a href=/categories/>~/categories</a></li><li class=pull-left><a href=/tags/>~/tags</a></li><li class=pull-right><a href=https://github.com/hackftz>~/github</a></li></ul></nav></header></head><body><br><div class=article-meta><h1><span class=title>深入理解TypeScript——文档篇之类</span></h1><h2 class=author>hackftz</h2><h2 class=date>2020/10/01</h2><p class=terms>Categories: <a href=/categories/typescript>TypeScript</a>
+Tags: <a href=/tags/2020-10>2020-10</a> <a href=/tags/note>note</a></p></div><div class=content-wrapper><main><h4 id=一js和ts类的区别>一、js和ts类的区别</h4><p>js是基于类的面向对象方式，构建父子类的继承结构，写起来不简洁，也不形象。ts则是以简洁明了的方式实现类的定义、继承、扩展等等。</p><p>之前我也提过，js最终会登录浏览器平台，但是至少不是现在，所以在下一个js时代之前，我们需要定ts来规范当前的客户端代码。</p><h4 id=二用ts实现类>二、用ts实现类</h4><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Greeter</span> {
+    <span style=color:#a6e22e>greeting</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>message</span>: <span style=color:#66d9ef>string</span>) {
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>greeting</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>message</span>;
+    }
+    <span style=color:#a6e22e>greet() {</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;Hello, &#34;</span> <span style=color:#f92672>+</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>greeting</span>;
+    }
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>greeter</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Greeter</span>(<span style=color:#e6db74>&#34;world&#34;</span>);
+</code></pre></div><h4 id=三继承>三、继承</h4><p>使用<code>extends</code> 关键字来继承。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Animal</span> { <span style=color:#75715e>// Animal是基类，也叫超类
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>move</span>(<span style=color:#a6e22e>distanceInMeters</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>) {
+        <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>`Animal moved </span><span style=color:#e6db74>${</span><span style=color:#a6e22e>distanceInMeters</span><span style=color:#e6db74>}</span><span style=color:#e6db74>m.`</span>);
+    }
+}
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Dog</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Animal</span> { <span style=color:#75715e>// Dog是派生自Animal的派生类，也叫子类
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>bark() {</span>
+        <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Woof! Woof!&#39;</span>);
+    }
+}
+
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>dog</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Dog</span>();
+<span style=color:#a6e22e>dog</span>.<span style=color:#a6e22e>bark</span>();
+<span style=color:#a6e22e>dog</span>.<span style=color:#a6e22e>move</span>(<span style=color:#ae81ff>10</span>);
+</code></pre></div><p>派生类的构造函数必须包含 &ldquo;super&rdquo; 调用。这是ts强制执行的一条重要规则。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#75715e>// 如果父类下没有构造函数，如下
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Animal</span> {
+  <span style=color:#a6e22e>move</span>(<span style=color:#a6e22e>distanceInMeters</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>) {
+
+  }
+}
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Snake</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Animal</span> {
+  <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>) {
+    <span style=color:#66d9ef>super</span>() <span style=color:#75715e>// 如果父类没有定义构造函数，父类会有默认值，什么都不做，但是子类必须要在构造函数中调用super
+</span><span style=color:#75715e></span>  }
+  <span style=color:#a6e22e>move</span>(<span style=color:#a6e22e>distanceInMeters</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>5</span>) {
+      <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#34;Slithering...&#34;</span>);
+      <span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>move</span>(<span style=color:#a6e22e>distanceInMeters</span>);
+  }
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>sam</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Snake</span>(<span style=color:#e6db74>&#34;Sammy the Python&#34;</span>);
+
+<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>sam</span>);
+
+<span style=color:#75715e>// 父类含有构造函数
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Animal</span> {
+    <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>theName</span>: <span style=color:#66d9ef>string</span>) { <span style=color:#75715e>// 在子类中执行基类的构造函数
+</span><span style=color:#75715e></span>        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>name</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>theName</span>; 
+    }
+    <span style=color:#a6e22e>move</span>(<span style=color:#a6e22e>distanceInMeters</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>) {
+        <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>`</span><span style=color:#e6db74>${</span><span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>name</span><span style=color:#e6db74>}</span><span style=color:#e6db74> moved </span><span style=color:#e6db74>${</span><span style=color:#a6e22e>distanceInMeters</span><span style=color:#e6db74>}</span><span style=color:#e6db74>m.`</span>);
+    }
+}
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Snake</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Animal</span> {
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>) { <span style=color:#66d9ef>super</span>(<span style=color:#a6e22e>name</span>); }
+    <span style=color:#a6e22e>move</span>(<span style=color:#a6e22e>distanceInMeters</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>5</span>) {
+        <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#34;Slithering...&#34;</span>);
+        <span style=color:#66d9ef>super</span>.<span style=color:#a6e22e>move</span>(<span style=color:#a6e22e>distanceInMeters</span>);
+    }
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>sam</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Snake</span>(<span style=color:#e6db74>&#34;Sammy the Python&#34;</span>);
+<span style=color:#a6e22e>sam</span>.<span style=color:#a6e22e>move</span>();
+</code></pre></div><h4 id=四公共私有与受保护的修饰符>四、公共、私有与受保护的修饰符</h4><p><code>public</code></p><p>前置定义，ts里可以不写即为默认为<code>public</code>，可以自由的访问定义的值。</p><p><code>private</code></p><p>不能再声明它的类的外部被访问。即为私有属性。</p><p><code>protected</code></p><p><code>protected</code>修饰符与 <code>private</code>修饰符的行为很相似，但有一点不同， <code>protected</code>成员在派生类中仍然可以访问，但是注意：依然不能在类的外面被访问。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Person</span> {
+    <span style=color:#66d9ef>protected</span> <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>) { <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>name</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>name</span>; }
+}
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Employee</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Person</span> {
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>department</span>: <span style=color:#66d9ef>string</span>;
+
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>department</span>: <span style=color:#66d9ef>string</span>) {
+        <span style=color:#66d9ef>super</span>(<span style=color:#a6e22e>name</span>)
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>department</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>department</span>;
+    }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>getElevatorPitch() {</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#e6db74>`Hello, my name is </span><span style=color:#e6db74>${</span><span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>name</span><span style=color:#e6db74>}</span><span style=color:#e6db74> and I work in </span><span style=color:#e6db74>${</span><span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>department</span><span style=color:#e6db74>}</span><span style=color:#e6db74>.`</span>;
+    }
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>howard</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Employee</span>(<span style=color:#e6db74>&#34;Howard&#34;</span>, <span style=color:#e6db74>&#34;Sales&#34;</span>);
+<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>howard</span>.<span style=color:#a6e22e>getElevatorPitch</span>());
+<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>howard</span>.<span style=color:#a6e22e>name</span>); <span style=color:#75715e>// 错误
+</span></code></pre></div><p>构造函数也可以被标记成 <code>protected</code>。 这意味着这个类不能在包含它的类外被实例化，但是能被继承。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#75715e>// 类属性 name、constructor =&gt; protected
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Person</span> {
+    <span style=color:#66d9ef>protected</span> <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#66d9ef>protected</span> <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>theName</span>: <span style=color:#66d9ef>string</span>) { <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>name</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>theName</span>; }
+}
+
+<span style=color:#75715e>// Employee 能够继承 Person
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Employee</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Person</span> {
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>department</span>: <span style=color:#66d9ef>string</span>;
+
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>department</span>: <span style=color:#66d9ef>string</span>) {
+        <span style=color:#66d9ef>super</span>(<span style=color:#a6e22e>name</span>);
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>department</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>department</span>;
+    }
+
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>getElevatorPitch() {</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#e6db74>`Hello, my name is </span><span style=color:#e6db74>${</span><span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>name</span><span style=color:#e6db74>}</span><span style=color:#e6db74> and I work in </span><span style=color:#e6db74>${</span><span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>department</span><span style=color:#e6db74>}</span><span style=color:#e6db74>.`</span>;
+    }
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>howard</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Employee</span>(<span style=color:#e6db74>&#34;Howard&#34;</span>, <span style=color:#e6db74>&#34;Sales&#34;</span>);
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>john</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Person</span>(<span style=color:#e6db74>&#34;John&#34;</span>); <span style=color:#75715e>// 类“Person”的构造函数是受保护的，仅可在类声明中访问。
+</span><span style=color:#75715e></span>
+<span style=color:#75715e>// 类属性 name =&gt; not protected, constructor =&gt; protected
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Person</span> {
+  <span style=color:#66d9ef>protected</span> <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>;
+  <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>theName</span>: <span style=color:#66d9ef>string</span>) { <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>name</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>theName</span>; }
+}
+
+<span style=color:#75715e>// Employee 能够继承 Person
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Employee</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Person</span> {
+  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>department</span>: <span style=color:#66d9ef>string</span>;
+
+  <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>department</span>: <span style=color:#66d9ef>string</span>) {
+      <span style=color:#66d9ef>super</span>(<span style=color:#a6e22e>name</span>);
+      <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>department</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>department</span>;
+  }
+
+  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>getElevatorPitch() {</span>
+      <span style=color:#66d9ef>return</span> <span style=color:#e6db74>`Hello, my name is </span><span style=color:#e6db74>${</span><span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>name</span><span style=color:#e6db74>}</span><span style=color:#e6db74> and I work in </span><span style=color:#e6db74>${</span><span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>department</span><span style=color:#e6db74>}</span><span style=color:#e6db74>.`</span>;
+  }
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>howard</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Employee</span>(<span style=color:#e6db74>&#34;Howard&#34;</span>, <span style=color:#e6db74>&#34;Sales&#34;</span>);
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>john</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Person</span>(<span style=color:#e6db74>&#34;John&#34;</span>);
+<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>john</span>.<span style=color:#a6e22e>name</span>); <span style=color:#75715e>// 属性“name”受保护，只能在类“Person”及其子类中访问。ts(2445)
+</span></code></pre></div><h4 id=五readonly修饰符>五、readonly修饰符</h4><p>使用 <code>readonly</code>关键字将属性设置为只读的。 只读属性必须在声明时或构造函数里被初始化。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Octopus</span> {
+    <span style=color:#a6e22e>readonly</span> <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#a6e22e>readonly</span> <span style=color:#a6e22e>numberOfLegs</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>8</span>;
+    <span style=color:#66d9ef>constructor</span> (<span style=color:#a6e22e>theName</span>: <span style=color:#66d9ef>string</span>) {
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>name</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>theName</span>;
+    }
+}
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>dad</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Octopus</span>(<span style=color:#e6db74>&#34;Man with the 8 strong legs&#34;</span>);
+<span style=color:#a6e22e>dad</span>.<span style=color:#a6e22e>name</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;Man with the 3-piece suit&#34;</span>; <span style=color:#75715e>// 错误! name 是只读的.
+</span></code></pre></div><p>参数属性：<em>参数属性</em>可以方便地让我们在一个地方定义并初始化一个成员。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Octopus</span> {
+    <span style=color:#a6e22e>readonly</span> <span style=color:#a6e22e>numberOfLegs</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>8</span>;
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>readonly</span> <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>) { <span style=color:#75715e>// 声明并初始化一个私有成员
+</span><span style=color:#75715e></span>    }
+}
+
+<span style=color:#75715e>// 等价于
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Octopus</span> {
+    <span style=color:#a6e22e>readonly</span> <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#a6e22e>readonly</span> <span style=color:#a6e22e>numberOfLegs</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>8</span>;
+    <span style=color:#66d9ef>constructor</span> (<span style=color:#a6e22e>theName</span>: <span style=color:#66d9ef>string</span>) {
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>name</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>theName</span>;
+    }
+}
+</code></pre></div><h4 id=六存取器>六、存取器</h4><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>passcode</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;secret passcode&#34;</span>;
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Employee</span> {
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>_fullName</span>: <span style=color:#66d9ef>string</span>;
+
+    <span style=color:#a6e22e>get</span> <span style=color:#a6e22e>fullName</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_fullName</span>;
+    }
+
+    <span style=color:#a6e22e>set</span> <span style=color:#a6e22e>fullName</span>(<span style=color:#a6e22e>newName</span>: <span style=color:#66d9ef>string</span>) {
+        <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>passcode</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>passcode</span> <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;secret passcode&#34;</span>) {
+            <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_fullName</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>newName</span>;
+        }
+        <span style=color:#66d9ef>else</span> {
+            <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#34;Error: Unauthorized update of employee!&#34;</span>);
+        }
+    }
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>employee</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Employee</span>();
+
+<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>employee</span>.<span style=color:#a6e22e>fullName</span>); <span style=color:#75715e>// Property &#39;_fullName&#39; has no initializer and is not definitely assigned in the constructor.  
+</span><span style=color:#75715e></span>
+<span style=color:#a6e22e>employee</span>.<span style=color:#a6e22e>fullName</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;Bob Smith&#34;</span>;
+
+<span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>employee</span>.<span style=color:#a6e22e>fullName</span>) {
+    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>employee</span>.<span style=color:#a6e22e>fullName</span>);
+}
+</code></pre></div><p>注意：</p><ul><li>存取器要求你将编译器设置为输出ECMAScript 5或更高。 不支持降级到ECMAScript 3。</li><li>其次，只带有 <code>get</code>不带有 <code>set</code>的存取器自动被推断为 <code>readonly</code>。</li></ul><h4 id=七静态属性>七、静态属性</h4><p>这些属性存在于类本身上面而不是类的实例上。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Grid</span> {
+    <span style=color:#66d9ef>static</span> <span style=color:#a6e22e>origin</span> <span style=color:#f92672>=</span> {<span style=color:#a6e22e>x</span>: <span style=color:#66d9ef>0</span>, <span style=color:#a6e22e>y</span>: <span style=color:#66d9ef>0</span>};
+    <span style=color:#a6e22e>calculateDistanceFromOrigin</span>(<span style=color:#a6e22e>point</span><span style=color:#f92672>:</span> {<span style=color:#a6e22e>x</span>: <span style=color:#66d9ef>number</span>; <span style=color:#a6e22e>y</span>: <span style=color:#66d9ef>number</span>;}) {
+        <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>xDist</span> <span style=color:#f92672>=</span> (<span style=color:#a6e22e>point</span>.<span style=color:#a6e22e>x</span> <span style=color:#f92672>-</span> <span style=color:#a6e22e>Grid</span>.<span style=color:#a6e22e>origin</span>.<span style=color:#a6e22e>x</span>); <span style=color:#75715e>// 如同在实例属性上使用 this.前缀来访问属性一样，这里我们使用 Grid.来访问静态属性。
+</span><span style=color:#75715e></span>        <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>yDist</span> <span style=color:#f92672>=</span> (<span style=color:#a6e22e>point</span>.<span style=color:#a6e22e>y</span> <span style=color:#f92672>-</span> <span style=color:#a6e22e>Grid</span>.<span style=color:#a6e22e>origin</span>.<span style=color:#a6e22e>y</span>);
+        <span style=color:#66d9ef>return</span> Math.<span style=color:#a6e22e>sqrt</span>(<span style=color:#a6e22e>xDist</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>xDist</span> <span style=color:#f92672>+</span> <span style=color:#a6e22e>yDist</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>yDist</span>) <span style=color:#f92672>/</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>scale</span>;
+    }
+    <span style=color:#66d9ef>constructor</span> (<span style=color:#66d9ef>public</span> <span style=color:#a6e22e>scale</span>: <span style=color:#66d9ef>number</span>) { }
+}
+</code></pre></div><h4 id=八抽象类>八、抽象类</h4><p>抽象类做为其它派生类的基类使用。 它们一般不会直接被实例化。</p><p>不同于接口，抽象类可以包含成员的实现细节。 <code>abstract</code>关键字是用于定义抽象类和在抽象类内部定义抽象方法。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Animal</span> {
+    <span style=color:#66d9ef>abstract</span> <span style=color:#a6e22e>makeSound</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span>;
+    <span style=color:#a6e22e>move</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
+        <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;roaming the earch...&#39;</span>);
+    }
+}
+</code></pre></div><p>抽象类中的抽象方法不包含具体实现并且必须在派生类中实现。 抽象方法的语法与接口方法相似。 两者都是定义方法签名但不包含方法体。 然而，抽象方法必须包含 <code>abstract</code>关键字并且可以包含访问修饰符。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Department</span> {
+
+  <span style=color:#66d9ef>constructor</span>(<span style=color:#66d9ef>public</span> <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>age</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>10</span>) { <span style=color:#75715e>// 如果age这里不用public定义，则它是一个局部变量，不能从实例的this.上获取到
+</span><span style=color:#75715e></span>  }
+
+  <span style=color:#a6e22e>printName</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
+      <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Department name: &#39;</span> <span style=color:#f92672>+</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>name</span>);
+  }
+
+  <span style=color:#66d9ef>abstract</span> <span style=color:#a6e22e>printMeeting</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span>; <span style=color:#75715e>// 必须在派生类中实现
+</span><span style=color:#75715e></span>}
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>AccountingDepartment</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Department</span> {
+
+  <span style=color:#66d9ef>constructor</span>() {
+      <span style=color:#66d9ef>super</span>(<span style=color:#e6db74>&#39;Accounting and Auditing&#39;</span>); <span style=color:#75715e>// 在派生类的构造函数中必须调用 super()
+</span><span style=color:#75715e></span>  }
+
+  <span style=color:#a6e22e>printMeeting</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
+      <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;The Accounting Department meets each Monday at 10am.&#39;</span>);
+  }
+
+  <span style=color:#a6e22e>generateReports</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
+      <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Generating accounting reports...&#39;</span>);
+  }
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>department</span>: <span style=color:#66d9ef>Department</span>; <span style=color:#75715e>// 允许创建一个对抽象类型的引用
+</span><span style=color:#75715e>// department = new Department(); // 错误: 不能创建一个抽象类的实例
+</span><span style=color:#75715e></span><span style=color:#a6e22e>department</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>AccountingDepartment</span>(); <span style=color:#75715e>// 允许对一个抽象子类进行实例化和赋值
+</span><span style=color:#75715e></span><span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>department</span>.<span style=color:#a6e22e>name</span>); <span style=color:#75715e>// Accounting and Auditing
+</span><span style=color:#75715e></span><span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>department</span>.<span style=color:#a6e22e>age</span>); <span style=color:#75715e>// 类型“Department”上不存在属性“age”。
+</span><span style=color:#75715e></span><span style=color:#a6e22e>department</span>.<span style=color:#a6e22e>printName</span>();
+<span style=color:#a6e22e>department</span>.<span style=color:#a6e22e>printMeeting</span>();
+<span style=color:#75715e>// department.generateReports(); // 错误: 方法在声明的抽象类中不存在
+</span></code></pre></div><p>注意上面标记*处： <code>Typescript</code> 提供的简写形式 — 用构造函数的参数直接定义属性。</p><h4 id=九高级技巧>九、高级技巧</h4><ol><li><p>构造函数</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Greeter</span> {
+    <span style=color:#66d9ef>static</span> <span style=color:#a6e22e>standardGreeting</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;Hello, there&#34;</span>;
+    <span style=color:#a6e22e>greeting</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#a6e22e>greet() {</span>
+        <span style=color:#66d9ef>if</span> (<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>greeting</span>) {
+            <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;Hello, &#34;</span> <span style=color:#f92672>+</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>greeting</span>;
+        }
+        <span style=color:#66d9ef>else</span> {
+            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>Greeter</span>.<span style=color:#a6e22e>standardGreeting</span>;
+        }
+    }
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>greeter1</span>: <span style=color:#66d9ef>Greeter</span>;
+<span style=color:#a6e22e>greeter1</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Greeter</span>();
+<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>greeter1</span>.<span style=color:#a6e22e>greet</span>());
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>greeterMaker</span>: <span style=color:#66d9ef>typeof</span> <span style=color:#a6e22e>Greeter</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Greeter</span>; <span style=color:#75715e>// Greeter类的类型，而不是实例的类型。
+</span><span style=color:#75715e></span><span style=color:#a6e22e>greeterMaker</span>.<span style=color:#a6e22e>standardGreeting</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;Hey there!&#34;</span>;
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>greeter2</span>: <span style=color:#66d9ef>Greeter</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>greeterMaker</span>();
+<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>greeter2</span>.<span style=color:#a6e22e>greet</span>());
+</code></pre></div></li><li><p>把类当作接口</p><p>因为类可以创建出类型，所以你能够在允许使用接口的地方使用类。</p><p>简而言之，就是把类当成接口来用。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Point</span> {
+    <span style=color:#a6e22e>x</span>: <span style=color:#66d9ef>number</span>;
+    <span style=color:#a6e22e>y</span>: <span style=color:#66d9ef>number</span>;
+}
+   
+<span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Point3d</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Point</span> {
+    <span style=color:#a6e22e>z</span>: <span style=color:#66d9ef>number</span>;
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>point3d</span>: <span style=color:#66d9ef>Point3d</span> <span style=color:#f92672>=</span> {<span style=color:#a6e22e>x</span>: <span style=color:#66d9ef>1</span>, <span style=color:#a6e22e>y</span>: <span style=color:#66d9ef>2</span>, <span style=color:#a6e22e>z</span>: <span style=color:#66d9ef>3</span>};
+</code></pre></div></li></ol><a href=/>>> Home</a></main></div><footer><script>(function(){function center_el(tagName){var tags=document.getElementsByTagName(tagName),i,tag;for(i=0;i<tags.length;i++){tag=tags[i];var parent=tag.parentElement;if(parent.childNodes.length===1){if(parent.nodeName==='A'){parent=parent.parentElement;if(parent.childNodes.length!=1)continue;}
+if(parent.nodeName==='P')parent.style.textAlign='center';}}}
+var tagNames=['img','embed','object'];for(var i=0;i<tagNames.length;i++){center_el(tagNames[i]);}})();</script><hr>公众号: KeepinJS | <a href=mailto:472849306@qq.com>Email</a></footer></body></html>
