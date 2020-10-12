@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/images/site.webmanifest">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A simple, minimal blog for those who love text.">
+    <title>深入理解TypeScript——文档篇之变量声明 | hackftz</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="https://hackftz.github.io/css/theme-override.css">
+    <header>
+
+  <nav>
+    <ul>
+      
+      
+      <li class="pull-left ">
+        <a href="https://hackftz.github.io/">~/hackftz</a>
+      </li>
+      
+      
+      <li class="pull-left ">
+        <a href="/categories/">~/categories</a>
+      </li>
+      
+      
+      <li class="pull-left ">
+        <a href="/tags/">~/tags</a>
+      </li>
+      
+
+      
+      
+      <li class="pull-right">
+        <a href="https://github.com/hackftz">~/github</a>
+      </li>
+      
+
+    </ul>
+  </nav>
+</header>
+
+  </head>
+
+  <body>
+    <br/>
+<div class="article-meta">
+<h1><span class="title">深入理解TypeScript——文档篇之变量声明</span></h1>
+<h2 class="author">hackftz</h2>
+<h2 class="date">2020/09/29</h2>
+<p class="terms">
+  
+  
+  Categories: <a href="/categories/typescript">TypeScript</a> 
+  
+  
+  
+  Tags: <a href="/tags/2020-09">2020-09</a> <a href="/tags/note">note</a> 
+  
+  
+</p>
+</div>
+
+
+<div class="content-wrapper">
+  <main>
+    <h3 id="一var声明">一、var声明</h3>
+<p>使用var的好处：公用变量，作用域下都可以获取到值。</p>
+<p>使用var的弊端：</p>
+<ol>
+<li>
+<p><code>var</code>声明可以在包含它的函数，模块，命名空间或全局作用域内部任何位置被访问，也就是说，var可以在其赋值前被访问（undefined），即使其定义在代码块内。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">f</span>(<span style="color:#a6e22e">shouldInitialize</span>: <span style="color:#66d9ef">boolean</span>) {
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">shouldInitialize</span>) {
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+    }
+   
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">x</span>;
+}
+   
+<span style="color:#a6e22e">f</span>(<span style="color:#66d9ef">true</span>);  <span style="color:#75715e">// returns &#39;10&#39;
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span>(<span style="color:#66d9ef">false</span>); <span style="color:#75715e">// returns &#39;undefined&#39;
+</span></code></pre></div></li>
+<li>
+<p>var定义的变量可以重复定义，并且不会报错，所以会导致变量引用重叠。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">sumMatrix</span>(<span style="color:#a6e22e">matrix</span>: <span style="color:#66d9ef">number</span>[][]) {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">sum</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">matrix</span>.<span style="color:#a6e22e">length</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">currentRow</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">matrix</span>[<span style="color:#a6e22e">i</span>];
+        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">currentRow</span>.<span style="color:#a6e22e">length</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+            <span style="color:#a6e22e">sum</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">currentRow</span>[<span style="color:#a6e22e">i</span>];
+        }
+    }
+   
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">sum</span>;
+}
+</code></pre></div></li>
+<li>
+<p>如果var定义的变量在for循环外部，并且for循环中为异步的输出，则会先执行同步循环，最后再走异步回调，那这样的话获取到的值就会是变量的最终值。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+    <span style="color:#a6e22e">setTimeout</span>(<span style="color:#66d9ef">function</span>() { <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">i</span>); }, <span style="color:#ae81ff">100</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">i</span>);
+}
+</code></pre></div><p>一个通常的解决方法是使用立即执行的函数表达式（IIFE）来捕获每次迭代时<code>i</code>的值：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-typescript" data-lang="typescript"><span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+    <span style="color:#75715e">// capture the current state of &#39;i&#39;
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// by invoking a function with its current value
+</span><span style="color:#75715e"></span>    (<span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">i</span>) {
+        <span style="color:#a6e22e">setTimeout</span>(<span style="color:#66d9ef">function</span>() { <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">i</span>); }, <span style="color:#ae81ff">100</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">i</span>);
+    })(<span style="color:#a6e22e">i</span>);
+}
+</code></pre></div></li>
+</ol>
+<h3 id="二let声明">二、let声明</h3>
+<ol>
+<li>块作用域变量在包含它们的块或<code>for</code>循环之外是不能访问的。</li>
+<li>不能在被声明之前读或写，直到声明它的代码之前的区域都属于 <em>暂时性死区</em>。</li>
+<li>不能在1个作用域里多次声明。</li>
+<li>在一个嵌套作用域里，内层let定义的变量，会屏蔽外层let定义的变量。</li>
+</ol>
+<h3 id="三const声明">三、const声明</h3>
+<ol>
+<li>给变量赋值后不能再改变（基本类型对应的是值，复杂类型对应的是引用）。</li>
+<li>不能重新赋值。</li>
+<li>可将对象内部属性设置为只读。</li>
+</ol>
+<h3 id="四解构">四、解构</h3>
+<p>解构表达式要尽量保持小而简单。</p>
+
+    <a href="/"> >> Home</a>
+  </main>
+</div>
+    <footer>
+      
+<script>
+(function() {
+  function center_el(tagName) {
+    var tags = document.getElementsByTagName(tagName), i, tag;
+    for (i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      var parent = tag.parentElement;
+      
+      if (parent.childNodes.length === 1) {
+        
+        if (parent.nodeName === 'A') {
+          parent = parent.parentElement;
+          if (parent.childNodes.length != 1) continue;
+        }
+        if (parent.nodeName === 'P') parent.style.textAlign = 'center';
+      }
+    }
+  }
+  var tagNames = ['img', 'embed', 'object'];
+  for (var i = 0; i < tagNames.length; i++) {
+    center_el(tagNames[i]);
+  }
+})();
+</script>
+
+      
+      <hr/>
+      公众号: KeepinJS | <a href="mailto:472849306@qq.com">Email</a>
+      
+    </footer>
+  </body>
+</html>
+

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/images/site.webmanifest">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A simple, minimal blog for those who love text.">
+    <title>深入理解TypeScript——第一章：上手篇 | hackftz</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="https://hackftz.github.io/css/theme-override.css">
+    <header>
+
+  <nav>
+    <ul>
+      
+      
+      <li class="pull-left ">
+        <a href="https://hackftz.github.io/">~/hackftz</a>
+      </li>
+      
+      
+      <li class="pull-left ">
+        <a href="/categories/">~/categories</a>
+      </li>
+      
+      
+      <li class="pull-left ">
+        <a href="/tags/">~/tags</a>
+      </li>
+      
+
+      
+      
+      <li class="pull-right">
+        <a href="https://github.com/hackftz">~/github</a>
+      </li>
+      
+
+    </ul>
+  </nav>
+</header>
+
+  </head>
+
+  <body>
+    <br/>
+<div class="article-meta">
+<h1><span class="title">深入理解TypeScript——第一章：上手篇</span></h1>
+<h2 class="author">hackftz</h2>
+<h2 class="date">2020/09/25</h2>
+<p class="terms">
+  
+  
+  Categories: <a href="/categories/typescript">TypeScript</a> 
+  
+  
+  
+  Tags: <a href="/tags/2020-09">2020-09</a> <a href="/tags/note">note</a> 
+  
+  
+</p>
+</div>
+
+
+<div class="content-wrapper">
+  <main>
+    <p>怎么定义TypeScript呢？ TypeScript是一个工具 是一个编译器</p>
+<p>1、编译代码</p>
+<p>TypeScript，通过它的能力，默认使用tsc命令，可以根据.ts为后缀名的文件生成一个新的js文件</p>
+<p>2、类型注解</p>
+<p>TypeScript里的类型注解是一种轻量级的为函数或变量添加约束的方式。TypeScript提供了静态的代码分析，它可以分析代码结构和提供的类型注解。</p>
+<pre><code>function doSth(who: string): string {
+  return &quot;I want to say hello to &quot; + who;
+}
+
+let who = 'her';
+
+const doWhat = doSth(who);
+
+console.log('doWhat:', doWhat)
+// doWhat: I want say hello to her
+</code></pre><p>这里插个题外话，如果部分语法产生error的话，要考虑tsconfig.json这样的配置文件（比如lib部分）是否支持了你需要的Javascript规范，如果不支持的话，建议使用polyfill</p>
+<p>3、接口</p>
+<p>允许我们在实现接口时候只要保证包含了接口要求的结构就可以</p>
+<pre><code>interface Girl {
+  hair: string;
+  face: string;
+}
+
+function describe(girl: Girl): string {
+  let words = 'she has '
+  let decs = Object.entries(girl)
+  let len = decs.length
+
+  for (let i = 0; i &lt; len; i++) {
+    const [where, like] = decs[i];
+    words+=(like + ' ' + where)
+    words+=(i === len - 1 ? '' : ' and ')
+  }
+  return words
+}
+
+const sentence = describe({
+  hair: 'long',
+  face: 'beautiful'
+})
+
+console.log('sentence:', sentence);
+// sentence: she has long hair and beautiful face
+</code></pre><p>4、类</p>
+<p>支持基于类的面向对象编程
+在构造函数的参数上使用public等同于创建了同名的成员变量</p>
+<pre><code>class She {
+  praise: string;
+  constructor(public hair: string, public face: string) {
+    // this.praise =  hair + ' hair' + &quot; and &quot; + face + ' face';
+  }
+}
+
+interface Girl {
+  hair: string;
+  face: string;
+}
+
+function describe(girl: Girl): string {
+  let words = 'she has '
+  let decs = Object.entries(girl)
+  let len = decs.length
+
+  for (let i = 0; i &lt; len; i++) {
+    const [where, like] = decs[i];
+    words+=(like + ' ' + where)
+    words+=(i === len - 1 ? '' : ' and ')
+  }
+  return words
+}
+
+const she = new She('long', 'beautiful')
+
+const sentence = describe(she)
+
+console.log('sentence', sentence);
+</code></pre><p>上面这段代码通过ts编译，成为了下面这段代码</p>
+<pre><code>var She = /** @class */ (function () {
+    function She(hair, face) {
+        this.hair = hair;
+        this.face = face;
+        // this.praise =  hair + ' hair' + &quot; and &quot; + face + ' face';
+    }
+    return She;
+}());
+function describe(girl) {
+    var words = 'she has ';
+    var decs = Object.entries(girl);
+    var len = decs.length;
+    for (var i = 0; i &lt; len; i++) {
+        var _a = decs[i], where = _a[0], like = _a[1];
+        words += (like + ' ' + where);
+        words += (i === len - 1 ? '' : ' and ');
+    }
+    return words;
+}
+var she = new She('long', 'beautiful');
+var sentence = describe(she);
+console.log('sentence', sentence);
+</code></pre><p>看起来，只是多了一些特殊的注释，以及修改了一些局部变量名，所以ts主要的功能其实是为了规范书写，校验传入参数是否正确，从而实现更高质量的代码！</p>
+
+    <a href="/"> >> Home</a>
+  </main>
+</div>
+    <footer>
+      
+<script>
+(function() {
+  function center_el(tagName) {
+    var tags = document.getElementsByTagName(tagName), i, tag;
+    for (i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      var parent = tag.parentElement;
+      
+      if (parent.childNodes.length === 1) {
+        
+        if (parent.nodeName === 'A') {
+          parent = parent.parentElement;
+          if (parent.childNodes.length != 1) continue;
+        }
+        if (parent.nodeName === 'P') parent.style.textAlign = 'center';
+      }
+    }
+  }
+  var tagNames = ['img', 'embed', 'object'];
+  for (var i = 0; i < tagNames.length; i++) {
+    center_el(tagNames[i]);
+  }
+})();
+</script>
+
+      
+      <hr/>
+      公众号: KeepinJS | <a href="mailto:472849306@qq.com">Email</a>
+      
+    </footer>
+  </body>
+</html>
+
