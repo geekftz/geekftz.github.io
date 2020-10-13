@@ -104,7 +104,8 @@ face: string;
 function describe(girl: Girl): string {
 let words = 'she has '
 let decs = Object.entries(girl)
-let len = decs.</description></item><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</link><pubDate>Mon, 23 Apr 2012 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</guid><description> 深入理解ts语法、用法、源码分析（暂时不用） 深入理解react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡record 打卡 2020-10-13 离10月14号还有45分钟的时候 我开始写下了这篇当日计划
+let len = decs.</description></item><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</link><pubDate>Mon, 23 Apr 2012 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</guid><description> 深入理解ts语法、用法、源码分析（暂时不用） 深入理解react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡record 打卡 2020-10-13
+离10月14号还有45分钟的时候 我开始写下了这篇当日计划
 今天熟悉了下ts的泛型、枚举、类型推断部分。
 其他：
 ES6中新添加的Array.prototype.fill 为什么框架很容易就走上大而全的不归之路？ 自定义元素 – 在 HTML 中定义新元素 10月14号 0:39分 网抑云ending</description></item></channel></rss>
