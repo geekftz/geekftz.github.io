@@ -1,0 +1,127 @@
+<!doctype html><html lang=en-us><head><link rel=stylesheet href=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css><script src=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=manifest href=/images/site.webmanifest><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A simple, minimal blog for those who love text."><title>深入理解TypeScript——文档篇之泛型 | hackftz</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=https://hackftz.github.io/css/theme-override.css><header><nav><ul><li class=pull-left><a href=https://hackftz.github.io/>~/hackftz</a></li><li class=pull-left><a href=/categories/>~/categories</a></li><li class=pull-left><a href=/tags/>~/tags</a></li><li class=pull-right><a href=https://github.com/hackftz>~/github</a></li></ul></nav></header></head><body><br><div class=article-meta><h1><span class=title>深入理解TypeScript——文档篇之泛型</span></h1><h2 class=author>hackftz</h2><h2 class=date>2020/10/13</h2><p class=terms>Categories: <a href=/categories/typescript>TypeScript</a>
+Tags: <a href=/tags/2020-10>2020-10</a> <a href=/tags/note>note</a></p></div><div class=content-wrapper><main><h4 id=一介绍>一、介绍</h4><p>类型变量，它是一种特殊的变量，只用于表示类型而不是值。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>identity</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> { <span style=color:#75715e>// 声明带有泛型的函数
+</span><span style=color:#75715e></span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>arg</span>;
+}
+</code></pre></div><h4 id=二使用>二、使用</h4><ol><li><p>传入所有的参数，包含类型参数：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>output</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>identity</span><span style=color:#f92672>&lt;</span><span style=color:#66d9ef>string</span><span style=color:#f92672>&gt;</span>(<span style=color:#e6db74>&#34;myString&#34;</span>);  <span style=color:#75715e>// type of output will be &#39;string&#39;
+</span></code></pre></div></li><li><p>类型推论</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>output</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>identity</span>(<span style=color:#e6db74>&#34;myString&#34;</span>);  <span style=color:#75715e>// type of output will be &#39;string&#39;
+</span></code></pre></div><p>编译器可以查看<code>myString</code>的值，然后把<code>T</code>设置为它的类型。 类型推论帮助我们保持代码精简和高可读性。如果编译器不能够自动地推断出类型的话，只能像上面那样明确的传入T的类型，在一些复杂的情况下，这是可能出现的。</p></li></ol><h4 id=三类型>三、类型</h4><ol><li><p>类型参数在最前面。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>identity</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>arg</span>;
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>myIdentity</span><span style=color:#f92672>:</span> <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>) <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>T</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>identity</span>;
+</code></pre></div></li><li><p>可以使用不同的泛型参数名。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>identity</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>arg</span>;
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>myIdentity</span><span style=color:#f92672>:</span> <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>U</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>U</span>) <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>U</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>identity</span>;
+</code></pre></div></li><li><p>使用带有调用签名的对象字面量来定义。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>identity</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>arg</span>;
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>myIdentity</span><span style=color:#f92672>:</span> {<span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>} <span style=color:#f92672>=</span> <span style=color:#a6e22e>identity</span>;
+   
+<span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>GenericIdentityFn</span> {
+    <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>;
+}
+   
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>identity</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>arg</span>;
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>myIdentity</span>: <span style=color:#66d9ef>GenericIdentityFn</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>identity</span>;
+</code></pre></div></li><li><p>泛型接口参数。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#75715e>// 把参数放在调用签名里
+</span><span style=color:#75715e></span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>GenericIdentityFn</span> {
+    <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>; 
+}
+   
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>identity</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>arg</span>;
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>myIdentity</span>: <span style=color:#66d9ef>GenericIdentityFn</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>identity</span>;
+   
+<span style=color:#75715e>// 把参数放在调用接口上
+</span><span style=color:#75715e></span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>GenericIdentityFn</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span> { 
+    (<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>;
+}
+   
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>identity</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>arg</span>;
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>myIdentity</span>: <span style=color:#66d9ef>GenericIdentityFn</span><span style=color:#f92672>&lt;</span><span style=color:#66d9ef>number</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>identity</span>; <span style=color:#75715e>// 锁定了之后代码里使用的类型
+</span></code></pre></div><p>除了泛型接口，我们还可以创建泛型类。<br>注意，无法创建泛型枚举和泛型命名空间。</p></li></ol><h4 id=四泛型类>四、泛型类</h4><pre><code>泛型类使用（ &lt;&gt;）括起泛型类型，跟在类名后面。
+```ts
+class GenericNumber&lt;T&gt; {
+    zeroValue: T;
+    add: (x: T, y: T) =&gt; T;
+}
+
+let myGenericNumber = new GenericNumber&lt;number&gt;();
+myGenericNumber.zeroValue = 0;
+myGenericNumber.add = function(x, y) { return x + y; };
+```  
+</code></pre><p>注意：泛型类指的是实例部分的类型，所以类的静态属性不能使用这个泛型类型。<br>这里意思是泛型类约束的是除类静态部分其他的属性部分。</p><h4 id=五泛型约束>五、泛型约束</h4><ol><li><p>限制传入参数的类型。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Lengthwise</span> { <span style=color:#75715e>// 创建一个包含 .length属性的接口
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>length</span>: <span style=color:#66d9ef>number</span>;
+}
+   
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>loggingIdentity</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Lengthwise</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>arg</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> { <span style=color:#75715e>// 使用这个接口和extends关键字来实现约束
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>arg</span>.<span style=color:#a6e22e>length</span>);  <span style=color:#75715e>// Now we know it has a .length property, so no more error
+</span><span style=color:#75715e></span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>arg</span>;
+}
+</code></pre></div></li><li><p>在泛型约束中使用类型参数
+两个类型之间使用约束</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>getProperty</span>(<span style=color:#a6e22e>obj</span>: <span style=color:#66d9ef>T</span>, <span style=color:#a6e22e>key</span>: <span style=color:#66d9ef>K</span>) {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>obj</span>[<span style=color:#a6e22e>key</span>];
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>x</span> <span style=color:#f92672>=</span> { <span style=color:#a6e22e>a</span>: <span style=color:#66d9ef>1</span>, <span style=color:#a6e22e>b</span>: <span style=color:#66d9ef>2</span>, <span style=color:#a6e22e>c</span>: <span style=color:#66d9ef>3</span>, <span style=color:#a6e22e>d</span>: <span style=color:#66d9ef>4</span> };
+   
+<span style=color:#a6e22e>getProperty</span>(<span style=color:#a6e22e>x</span>, <span style=color:#e6db74>&#34;a&#34;</span>); <span style=color:#75715e>// okay
+</span><span style=color:#75715e></span><span style=color:#a6e22e>getProperty</span>(<span style=color:#a6e22e>x</span>, <span style=color:#e6db74>&#34;m&#34;</span>); <span style=color:#75715e>// error: Argument of type &#39;m&#39; isn&#39;t assignable to &#39;a&#39; | &#39;b&#39; | &#39;c&#39; | &#39;d&#39;.
+</span></code></pre></div></li><li><p>在泛型里使用类类型<br>(1) 工厂函数</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>create</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>c</span><span style=color:#f92672>:</span> {<span style=color:#66d9ef>new</span>()<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>; })<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>c</span>();
+}
+   
+<span style=color:#75715e>// test
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Test</span> {
+    <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;test&#39;</span>;
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>a</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>create</span>(<span style=color:#a6e22e>Test</span>)
+   
+<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>a</span>, <span style=color:#ae81ff>123</span>);
+</code></pre></div><p>(2) 原型属性推断并约束构造函数与类实例的关系</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>BeeKeeper</span> {
+  <span style=color:#a6e22e>hasMask</span>: <span style=color:#66d9ef>boolean</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>false</span>;
+}
+   
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ZooKeeper</span> {
+    <span style=color:#a6e22e>nametag</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;333&#39;</span>;
+}
+   
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Animal</span> {
+    <span style=color:#a6e22e>numLegs</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+}
+   
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Bee</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Animal</span> {
+    <span style=color:#a6e22e>keeper</span>: <span style=color:#66d9ef>BeeKeeper</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>BeeKeeper</span>();
+}
+   
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Lion</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Animal</span> {
+    <span style=color:#a6e22e>keeper</span>: <span style=color:#66d9ef>ZooKeeper</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>ZooKeeper</span>();
+}
+   
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>createInstance</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>A</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Animal</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>c</span>: <span style=color:#66d9ef>new</span> () <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>A</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>A</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>c</span>();
+}
+   
+<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>a</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>createInstance</span>(<span style=color:#a6e22e>Lion</span>).<span style=color:#a6e22e>keeper</span>.<span style=color:#a6e22e>nametag</span>;  <span style=color:#75715e>// typechecks!
+</span><span style=color:#75715e>// createInstance(Bee).keeper.hasMask;   // typechecks!
+</span><span style=color:#75715e></span>   
+<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>a</span>, <span style=color:#ae81ff>123</span>);
+   
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>create</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>c</span><span style=color:#f92672>:</span> {<span style=color:#66d9ef>new</span>()<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>; })<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> {
+  <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>c</span>();
+}
+</code></pre></div></li></ol><a href=/>>> Home</a></main></div><footer><script>(function(){function center_el(tagName){var tags=document.getElementsByTagName(tagName),i,tag;for(i=0;i<tags.length;i++){tag=tags[i];var parent=tag.parentElement;if(parent.childNodes.length===1){if(parent.nodeName==='A'){parent=parent.parentElement;if(parent.childNodes.length!=1)continue;}
+if(parent.nodeName==='P')parent.style.textAlign='center';}}}
+var tagNames=['img','embed','object'];for(var i=0;i<tagNames.length;i++){center_el(tagNames[i]);}})();</script><hr>公众号: KeepinJS | <a href=mailto:472849306@qq.com>Email</a></footer></body></html>
