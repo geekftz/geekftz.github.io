@@ -93,4 +93,4 @@ face: string;
 function describe(girl: Girl): string {
 let words = 'she has '
 let decs = Object.entries(girl)
-let len = decs.</description></item><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</link><pubDate>Mon, 23 Apr 2012 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</guid><description/></item></channel></rss>
+let len = decs.</description></item><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</link><pubDate>Mon, 23 Apr 2012 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</guid><description> 深入理解ts语法、用法、源码分析（暂时不用） 深入理解react 近版本迭代、语法、用法、源码分析</description></item></channel></rss>
