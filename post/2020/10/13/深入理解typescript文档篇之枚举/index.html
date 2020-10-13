@@ -1,51 +1,151 @@
 <!doctype html><html lang=en-us><head><link rel=stylesheet href=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css><script src=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=manifest href=/images/site.webmanifest><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A simple, minimal blog for those who love text."><title>深入理解TypeScript——文档篇之枚举 | hackftz</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=https://hackftz.github.io/css/theme-override.css><header><nav><ul><li class=pull-left><a href=https://hackftz.github.io/>~/hackftz</a></li><li class=pull-left><a href=/categories/>~/categories</a></li><li class=pull-left><a href=/tags/>~/tags</a></li><li class=pull-right><a href=https://github.com/hackftz>~/github</a></li></ul></nav></header></head><body><br><div class=article-meta><h1><span class=title>深入理解TypeScript——文档篇之枚举</span></h1><h2 class=author>hackftz</h2><h2 class=date>2020/10/13</h2><p class=terms>Categories: <a href=/categories/typescript>TypeScript</a>
-Tags: <a href=/tags/2020-10>2020-10</a> <a href=/tags/note>note</a></p></div><div class=content-wrapper><main><h4 id=一基础>一、基础</h4><p>TypeScript里，在有些没有明确指出类型的地方，类型推论会帮助提供类型</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>x</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>3</span>; <span style=color:#75715e>// let x: number
-</span></code></pre></div><h4 id=二最佳通用类型>二、最佳通用类型</h4><p>计算通用类型算法会考虑所有的候选类型，并给出一个兼容所有候选类型的类型。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#75715e>// demo 1
-</span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>x</span> <span style=color:#f92672>=</span> [<span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>1</span>, <span style=color:#66d9ef>null</span>, <span style=color:#e6db74>&#39;haha&#39;</span>]; <span style=color:#75715e>// let x: (string | number | null)[]
-</span><span style=color:#75715e></span>
-<span style=color:#75715e>// demo 2
-</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Rhino</span> {
-  <span style=color:#66d9ef>constructor</span>() {
-    
-  }
+Tags: <a href=/tags/2020-10>2020-10</a> <a href=/tags/note>note</a></p></div><div class=content-wrapper><main><h4 id=一概念>一、概念</h4><p>使用枚举我们可以定义一些带名字的常量。
+我理解的是使用枚举，可以解决我们在项目中定义常量不规范的问题。</p><ol><li><p>数字枚举</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#75715e>// 使用初始化器
+</span><span style=color:#75715e></span><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Direction</span> { <span style=color:#75715e>// 定义数字枚举
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>Up</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>, <span style=color:#75715e>// 使用初始化器，初始值1
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>Down</span>, <span style=color:#75715e>// 2
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>Left</span>, <span style=color:#75715e>// 3
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>Right</span> <span style=color:#75715e>// 4
+</span><span style=color:#75715e></span>    <span style=color:#75715e>// ...定义依次递增
+</span><span style=color:#75715e></span>}
+   
+<span style=color:#75715e>// 不使用初始化器
+</span><span style=color:#75715e></span><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Direction</span> {
+    <span style=color:#a6e22e>Up</span>, <span style=color:#75715e>// 0
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>Down</span>, <span style=color:#75715e>// 1
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>Left</span>,
+    <span style=color:#a6e22e>Right</span>,
 }
-
-<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Elephant</span> {
-  <span style=color:#66d9ef>constructor</span>() {
-    
-  }
+</code></pre></div><p>通过枚举的属性来访问枚举成员，和枚举的名字来访问枚举类型</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Response</span> {
+    <span style=color:#a6e22e>No</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>,
+    <span style=color:#a6e22e>Yes</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>,
 }
-
-<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Snake</span> {
-  <span style=color:#66d9ef>constructor</span>() {
-    
-  }
+   
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>respond</span>(<span style=color:#a6e22e>recipient</span>: <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>message</span>: <span style=color:#66d9ef>Response</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
+    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>recipient</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39; &#39;</span> <span style=color:#f92672>+</span>  <span style=color:#a6e22e>message</span>);
 }
-
-<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>zoo</span> <span style=color:#f92672>=</span> [<span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Rhino</span>(), <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Elephant</span>(), <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Snake</span>()]; <span style=color:#75715e>// let zoo: (Rhino | Elephant | Snake)[]
-</span></code></pre></div><h4 id=三上下文类型>三、上下文类型</h4><p>TypeScript类型推论也可能按照相反的方向进行。 这被叫做“按上下文归类”。按上下文归类会发生在表达式的类型与所处的位置相关时。<br>TypeScript类型检查器使用Window.onmousedown函数的类型来推断右边函数表达式的类型。因此，就能推断出 mouseEvent参数的类型了。<br>如果函数表达式不是在上下文类型的位置， mouseEvent参数的类型需要指定为any，这样也不会报错了。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts>window.<span style=color:#a6e22e>onmousedown</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>function</span>(<span style=color:#a6e22e>mouseEvent</span>) { <span style=color:#75715e>// (parameter) mouseEvent: any
-</span><span style=color:#75715e></span>
-    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>mouseEvent</span>.<span style=color:#a6e22e>button</span>);  <span style=color:#75715e>//&lt;- Error
-</span><span style=color:#75715e></span>};
-</code></pre></div><p>注：如果上下文类型表达式包含了明确的类型信息，上下文的类型被忽略。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#75715e>// test 1
-</span><span style=color:#75715e></span>window.<span style=color:#a6e22e>onmousedown</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>function</span>(<span style=color:#a6e22e>mouseEvent</span>: <span style=color:#66d9ef>any</span>) {
-    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>mouseEvent</span>.<span style=color:#a6e22e>button</span>);  <span style=color:#75715e>//&lt;- Now, no error is given
-</span><span style=color:#75715e></span>};
-
-<span style=color:#75715e>// test 2
-</span><span style=color:#75715e></span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Name</span> {
-  <span style=color:#a6e22e>button</span>: <span style=color:#66d9ef>string</span>;
+   
+<span style=color:#a6e22e>respond</span>(<span style=color:#e6db74>&#34;Princess Caroline&#34;</span>, <span style=color:#a6e22e>Response</span>.<span style=color:#a6e22e>Yes</span>) <span style=color:#75715e>// Princess Caroline 1
+</span><span style=color:#75715e></span><span style=color:#a6e22e>respond</span>(<span style=color:#e6db74>&#34;Princess Caroline&#34;</span>, <span style=color:#ae81ff>1000</span>) <span style=color:#75715e>// Princess Caroline 1000 这里值没有在Response里定义也不报错
+</span><span style=color:#75715e></span><span style=color:#a6e22e>respond</span>(<span style=color:#e6db74>&#34;Princess Caroline&#34;</span>, <span style=color:#e6db74>&#39;df&#39;</span>) <span style=color:#75715e>// error 类型“&#34;df&#34;”的参数不能赋给类型“Response”的参数。ts(2345)
+</span></code></pre></div><p>数字枚举中使用函数计算得出的常量成员，后面紧跟着的常量成员必须使用常量进行初始化。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>getSomeValue</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>number</span> {
+  <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>123</span>
 }
-
-<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>App() {</span>
-  window.<span style=color:#a6e22e>onmousedown</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>function</span>(<span style=color:#a6e22e>mouseEvent</span>: <span style=color:#66d9ef>Name</span>) { <span style=color:#75715e>// TypeScript类型检查器使用Window.onmousedown函数的类型来推断右边函数表达式的类型。 因此，就能推断出 mouseEvent参数的类型了。 
-</span><span style=color:#75715e></span>    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>mouseEvent</span>.<span style=color:#a6e22e>button</span>);  <span style=color:#75715e>//&lt;- Error
-</span><span style=color:#75715e></span>};
-<span style=color:#75715e>// 不能将类型“(mouseEvent: Name) =&gt; void”分配给类型“((this: //GlobalEventHandlers, ev: MouseEvent) =&gt; any) &amp; ((this: Window, ev: MouseEvent) =&gt; any)”。
-</span><span style=color:#75715e>// 不能将类型“(mouseEvent: Name) =&gt; void”分配给类型“(this: GlobalEventHandlers, ev: MouseEvent) =&gt; any”。
-</span><span style=color:#75715e>// 参数“mouseEvent”和“ev” 的类型不兼容。
-</span><span style=color:#75715e>// 不能将类型“MouseEvent”分配给类型“Name”。
-</span><span style=color:#75715e>// 属性“button”的类型不兼容。
-</span></code></pre></div><a href=/>>> Home</a></main></div><footer><script>(function(){function center_el(tagName){var tags=document.getElementsByTagName(tagName),i,tag;for(i=0;i<tags.length;i++){tag=tags[i];var parent=tag.parentElement;if(parent.childNodes.length===1){if(parent.nodeName==='A'){parent=parent.parentElement;if(parent.childNodes.length!=1)continue;}
+   
+<span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>E</span> {
+  <span style=color:#a6e22e>A</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>getSomeValue</span>(),
+  <span style=color:#a6e22e>B</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>, <span style=color:#75715e>// error! 前面的&#39;A&#39;不是常量初始化的，所以&#39;B&#39;需要一个初始化器
+</span><span style=color:#75715e></span>  <span style=color:#a6e22e>C</span> <span style=color:#75715e>// 2 no error
+</span><span style=color:#75715e></span>}
+</code></pre></div></li><li><p>字符串枚举</p><p>在一个字符串枚举里，每个成员都必须用字符串字面量，或另外一个字符串枚举成员进行初始化。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Direction</span> {
+    <span style=color:#a6e22e>Up</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;UP&#34;</span>,
+    <span style=color:#a6e22e>Down</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;DOWN&#34;</span>,
+    <span style=color:#a6e22e>Left</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;LEFT&#34;</span>,
+    <span style=color:#a6e22e>Right</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;RIGHT&#34;</span>,
+}
+</code></pre></div></li><li><p>异构枚举</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>BooleanLikeHeterogeneousEnum</span> { <span style=color:#75715e>// 不建议这样使用
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>No</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>,
+    <span style=color:#a6e22e>Yes</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;YES&#34;</span>,
+}
+</code></pre></div></li><li><p>计算的成员和常量成员</p></li></ol><ul><li><p>它是枚举的第一个成员且没有初始化器，这种情况下它被赋予值 0</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#75715e>// E.X is constant:
+</span><span style=color:#75715e></span><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>E</span> { 
+    <span style=color:#a6e22e>X</span> <span style=color:#75715e>// 0
+</span><span style=color:#75715e></span>}
+</code></pre></div></li><li><p>它不带有初始化器且它之前的枚举成员是一个 数字常量。 这种情况下，当前枚举成员的值为它上一个枚举成员的值加1。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>E2</span> {
+    <span style=color:#a6e22e>A</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>, 
+    <span style=color:#a6e22e>B</span>, <span style=color:#75715e>// 2
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>C</span> <span style=color:#75715e>// 3
+</span><span style=color:#75715e></span>}
+</code></pre></div></li><li><p>枚举成员使用 常量枚举表达式初始化。
+使用规则：<br>一个枚举表达式字面量（主要是字符串字面量或数字字面量）<br>一个对之前定义的常量枚举成员的引用（可以是在不同的枚举类型中定义的）<br>带括号的常量枚举表达式<br>一元运算符 +, -, ~其中之一应用在了常量枚举表达式<br>常量枚举表达式做为二元运算符 +, -, *, /, %, &#171;, &#187;, &#187;>, &, |, ^的操作对象<br>若常数枚举表达式求值后为 NaN或 Infinity，则会在编译阶段报错。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>FileAccess</span> {
+    <span style=color:#75715e>// constant members
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>None</span>,
+    <span style=color:#a6e22e>Read</span>    <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span> <span style=color:#f92672>&lt;&lt;</span> <span style=color:#ae81ff>1</span>,
+    <span style=color:#a6e22e>Write</span>   <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span> <span style=color:#f92672>&lt;&lt;</span> <span style=color:#ae81ff>2</span>,
+    <span style=color:#a6e22e>ReadWrite</span>  <span style=color:#f92672>=</span> <span style=color:#a6e22e>Read</span> <span style=color:#f92672>|</span> <span style=color:#a6e22e>Write</span>,
+    <span style=color:#75715e>// computed member
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>G</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;123&#34;</span>.<span style=color:#a6e22e>length</span>
+}
+</code></pre></div></li></ul><ol start=5><li><p>枚举成员成为类型</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>ShapeKind</span> {
+  <span style=color:#a6e22e>Circle</span>,
+  <span style=color:#a6e22e>Square</span>,
+}
+   
+<span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Circle</span> {
+  <span style=color:#a6e22e>kind</span>: <span style=color:#66d9ef>ShapeKind.Circle</span>;
+  <span style=color:#a6e22e>radius</span>: <span style=color:#66d9ef>number</span>;
+}
+   
+<span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Square</span> {
+  <span style=color:#a6e22e>kind</span>: <span style=color:#66d9ef>ShapeKind.Square</span>;
+  <span style=color:#a6e22e>sideLength</span>: <span style=color:#66d9ef>number</span>;
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>c</span>: <span style=color:#66d9ef>Circle</span> <span style=color:#f92672>=</span> {
+  <span style=color:#a6e22e>kind</span>: <span style=color:#66d9ef>ShapeKind.Square</span>, <span style=color:#75715e>// Error!
+</span><span style=color:#75715e></span>  <span style=color:#75715e>// kind: 1, no error 
+</span><span style=color:#75715e></span>  <span style=color:#75715e>// kind: 123, no error
+</span><span style=color:#75715e></span>  <span style=color:#75715e>// kind: &#39;str&#39;, // 不能将类型“string”分配给类型“ShapeKind.Circle”。
+</span><span style=color:#75715e></span>  <span style=color:#a6e22e>radius</span>: <span style=color:#66d9ef>100</span>,
+}
+</code></pre></div><p>短路问题</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>E</span> {
+    <span style=color:#a6e22e>Foo</span>,
+    <span style=color:#a6e22e>Bar</span>
+}
+   
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>f</span>(<span style=color:#a6e22e>x</span>: <span style=color:#66d9ef>E</span>) {
+    <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>x</span> <span style=color:#f92672>!==</span> <span style=color:#a6e22e>E</span>.<span style=color:#a6e22e>Foo</span> <span style=color:#f92672>||</span> <span style=color:#a6e22e>x</span> <span style=color:#f92672>!==</span> <span style=color:#a6e22e>E</span>.<span style=color:#a6e22e>Bar</span>) { <span style=color:#75715e>// 判断无意义，总是会通过第一个判断
+</span><span style=color:#75715e></span>        <span style=color:#75715e>//             ~~~~~~~~~~~
+</span><span style=color:#75715e></span>        <span style=color:#75715e>// Error! Operator &#39;!==&#39; cannot be applied to types &#39;E.Foo&#39; and &#39;E.Bar&#39;.
+</span><span style=color:#75715e></span>        <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>x</span>);
+    }
+}
+</code></pre></div></li><li><p>将枚举当作参数传入函数中</p><p>枚举对象</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>E</span> {
+  <span style=color:#a6e22e>X</span>, <span style=color:#a6e22e>Y</span>, <span style=color:#a6e22e>Z</span>
+}
+   
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>f</span>(<span style=color:#a6e22e>obj</span><span style=color:#f92672>:</span> { <span style=color:#a6e22e>X</span>: <span style=color:#66d9ef>number</span> }) {
+  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>obj</span>.<span style=color:#a6e22e>X</span>; <span style=color:#75715e>// Works, since &#39;E&#39; has a property named &#39;X&#39; which is a number.
+</span><span style=color:#75715e></span>}
+   
+<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>f</span>(<span style=color:#a6e22e>E</span>)); <span style=color:#75715e>// 0
+</span></code></pre></div><p>反向映射：从枚举值到枚举名字。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Enum</span> {
+    <span style=color:#a6e22e>A</span>
+}
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>a</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Enum</span>.<span style=color:#a6e22e>A</span>;
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>nameOfA</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Enum</span>[<span style=color:#a6e22e>a</span>]; <span style=color:#75715e>// &#34;A&#34;
+</span></code></pre></div><p>生成的代码中，枚举类型被编译成一个对象，它包含了正向映射（ name -> value）和反向映射（ value -> name）。 引用枚举成员总会生成为对属性访问并且永远也不会内联代码。</p><p>要注意的是 不会为字符串枚举成员生成反向映射。</p></li><li><p>const枚举
+减少重复代码定义产生的代码量开销
+避免非直接的对枚举成员的访问</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>const</span> <span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Enum</span> {
+    <span style=color:#a6e22e>A</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>,
+    <span style=color:#a6e22e>B</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>A</span> <span style=color:#f92672>*</span> <span style=color:#ae81ff>2</span>
+}
+</code></pre></div><p>常量枚举只能使用常量枚举表达式，并且不同于常规的枚举，它们在编译阶段会被删除。<br>常量枚举成员在使用的地方会被内联进来。<br>常量枚举不允许包含计算成员。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#75715e>// 使用常量枚举
+</span><span style=color:#75715e></span><span style=color:#66d9ef>const</span> <span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Directions</span> {
+    <span style=color:#a6e22e>Up</span>,
+    <span style=color:#a6e22e>Down</span>,
+    <span style=color:#a6e22e>Left</span>,
+    <span style=color:#a6e22e>Right</span>
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>directions</span> <span style=color:#f92672>=</span> [<span style=color:#a6e22e>Directions</span>.<span style=color:#a6e22e>Up</span>, <span style=color:#a6e22e>Directions</span>.<span style=color:#a6e22e>Down</span>, <span style=color:#a6e22e>Directions</span>.<span style=color:#a6e22e>Left</span>, <span style=color:#a6e22e>Directions</span>.<span style=color:#a6e22e>Right</span>] <span style=color:#75715e>// [0 /* Up */, 1 /* Down */, 2 /* Left */, 3 /* Right */]
+</span><span style=color:#75715e></span>   
+<span style=color:#75715e>// 使用计算初始化枚举成员
+</span><span style=color:#75715e></span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>getval() {</span>
+  <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>123</span>
+}
+   
+<span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Directions</span> {
+    <span style=color:#a6e22e>Up</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>getval</span>(),
+    <span style=color:#a6e22e>Down</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>
+}
+   
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>directions</span> <span style=color:#f92672>=</span> [<span style=color:#a6e22e>Directions</span>.<span style=color:#a6e22e>Up</span>, <span style=color:#a6e22e>Directions</span>.<span style=color:#a6e22e>Down</span>] <span style=color:#75715e>// [123, 1]
+</span></code></pre></div></li><li><p>外部枚举</p><p>外部枚举用来描述已经存在的枚举类型的形状。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>declare</span> <span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>Enum</span> { <span style=color:#75715e>// 没有完全弄懂这个declare，据网上博文描述，
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>A</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>,
+    <span style=color:#a6e22e>B</span>,
+    <span style=color:#a6e22e>C</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>2</span>
+}
+</code></pre></div><p>外部枚举和非外部枚举之间有一个重要的区别，在正常的枚举里，没有初始化方法的成员被当成常数成员。 对于非常数的外部枚举而言，没有初始化方法时被当做需要经过计算的。</p></li></ol><a href=/>>> Home</a></main></div><footer><script>(function(){function center_el(tagName){var tags=document.getElementsByTagName(tagName),i,tag;for(i=0;i<tags.length;i++){tag=tags[i];var parent=tag.parentElement;if(parent.childNodes.length===1){if(parent.nodeName==='A'){parent=parent.parentElement;if(parent.childNodes.length!=1)continue;}
 if(parent.nodeName==='P')parent.style.textAlign='center';}}}
 var tagNames=['img','embed','object'];for(var i=0;i<tagNames.length;i++){center_el(tagNames[i]);}})();</script><hr>公众号: KeepinJS | <a href=mailto:472849306@qq.com>Email</a></footer></body></html>
