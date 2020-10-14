@@ -110,5 +110,6 @@ let len = decs.</description></item><item><title>Plan 2020,Oct</title><link>http
 其他：
 ES6中新添加的Array.prototype.fill 为什么框架很容易就走上大而全的不归之路？ 自定义元素 – 在 HTML 中定义新元素 10月14号 0:39分 网抑云ending
 2020-10-14
-类继承已经过时了——《设计模式：可复用面向对象软件的基础》downloaded 谈谈 jQuery 中的防冲突（noConflict）机制——avalonjs源码分析ing 通俗易懂了解Vue中nextTick的内部实现原理 https://www.cnblogs.com/rubylouvre/p/3290833.html——avalonjs中avalon.nexttick处理（setImmediate、MutationObserver、postMessage） avalon中使用了postMessage，vue中则是使用了MessageChannel(MessageChannel基本上是一个双向通信管道.可以把它想象成window.postMessage / window.onmessage的替代品 – 但是更简单,更易于配置.)
-这里 js 宏任务和微任务——这里只做了定义，也没说怎么实现这个区分 [【Vue原理】NextTick - 源码版 之 宏微任务的抉择]——withMacroTask的使用</description></item></channel></rss>
+类继承已经过时了——《设计模式：可复用面向对象软件的基础》downloaded 谈谈 jQuery 中的防冲突（noConflict）机制——avalonjs源码分析ing 通俗易懂了解Vue中nextTick的内部实现原理 前端异步解决方案——mmDeferred
+avalonjs中avalon.nexttick处理（setImmediate、MutationObserver、postMessage）
+avalon中使用了postMessage，vue中则是使用了MessageChannel(MessageChannel基本上是一个双向通信管道.可以把它想象成window.postMessage / window.onmessage的替代品 – 但是更简单,更易于配置.) js 宏任务和微任务——这里只做了定义，也没说怎么实现这个区分 【Vue原理】NextTick - 源码版 之 宏微任务的抉择——withMacroTask的使用</description></item></channel></rss>
