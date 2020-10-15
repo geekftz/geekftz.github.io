@@ -104,7 +104,7 @@ face: string;
 function describe(girl: Girl): string {
 let words = 'she has '
 let decs = Object.entries(girl)
-let len = decs.</description></item><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</link><pubDate>Mon, 23 Apr 2012 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</guid><description> 深入理解ts语法、用法、源码分析（暂时不用） 深入理解react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡record 打卡 2020-10-13
+let len = decs.</description></item><item><title/><link>https://hackftz.github.io/post/1/01/01/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/1/01/01/</guid><description>深入理解ts语法、用法、源码分析（暂时不用） 深入理解react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡record 打卡 2020-10-13
 离10月14号还有45分钟的时候 我开始写下了这篇当日计划
 今天熟悉了下ts的泛型、枚举、类型推断部分。
 其他：
@@ -112,4 +112,9 @@ ES6中新添加的Array.prototype.fill 为什么框架很容易就走上大而�
 2020-10-14
 类继承已经过时了——《设计模式：可复用面向对象软件的基础》downloaded 谈谈 jQuery 中的防冲突（noConflict）机制——avalonjs源码分析ing 通俗易懂了解Vue中nextTick的内部实现原理 前端异步解决方案——mmDeferred
 avalonjs中avalon.nexttick处理（setImmediate、MutationObserver、postMessage）avalon中在event事件中使用了window.postMessage来监听。
-vue中则是使用了MessageChannel(MessageChannel基本上是一个双向通信管道.可以把它想象成window.postMessage。window.onmessage的替代品 – 但是更简单,更易于配置.) js 宏任务和微任务——这里只做了定义，也没说怎么实现这个区分。 【Vue原理】NextTick - 源码版 之 宏微任务的抉择——withMacroTask的使用，通过事件注册节点来区分宏和微。</description></item></channel></rss>
+vue中则是使用了MessageChannel(MessageChannel基本上是一个双向通信管道.可以把它想象成window.postMessage。window.onmessage的替代品 – 但是更简单,更易于配置.) js 宏任务和微任务——这里只做了定义，也没说怎么实现这个区分。 【Vue原理】NextTick - 源码版 之 宏微任务的抉择——withMacroTask的使用，通过事件注册节点来区分宏和微。 2020-10-15
+Deferred实现
+这个独立实现deferred在使用上来说不够优雅，Promise/A和Promise/A+更好。 深入研究-webkit-overflow-scrolling:touch及ios滚动
+解决问题：safari上，当超出高度，页面往下滑时，浏览器底部的工具栏会随着页面一起晃动（向下滚动时会拉起底部工具栏），造成了很不好的体验。
+解决方案：对inner content的min-height或者:after伪元素设置height加1%或1px。从而主动触发scrollbar。 ScrollFix.js：一个 iOS5 溢出滚动的（有限）修复方案
+ScrollFix 的原理是这样的，在触摸开始时，如果发现滚动区域已经处于极限状态时，就手工设置 scrollTop 的值，将滚动内容向边缘方向偏移 1px（这实际上改变了滚动区域的极限状态），从而诱使浏览器对滚动区块使用橡皮筋效果，而不会把触摸事件向上传播到 DOM 树（引起整页滚动）。 javascript 的位操作符转换推断</description></item></channel></rss>
