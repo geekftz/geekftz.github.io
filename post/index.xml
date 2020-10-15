@@ -117,4 +117,5 @@ Deferred实现
 这个独立实现deferred在使用上来说不够优雅，Promise/A和Promise/A+更好。 深入研究-webkit-overflow-scrolling:touch及ios滚动
 解决问题：safari上，当超出高度，页面往下滑时，浏览器底部的工具栏会随着页面一起晃动（向下滚动时会拉起底部工具栏），造成了很不好的体验。
 解决方案：对inner content的min-height或者:after伪元素设置height加1%或1px。从而主动触发scrollbar。 ScrollFix.js：一个 iOS5 溢出滚动的（有限）修复方案
-ScrollFix 的原理是这样的，在触摸开始时，如果发现滚动区域已经处于极限状态时，就手工设置 scrollTop 的值，将滚动内容向边缘方向偏移 1px（这实际上改变了滚动区域的极限状态），从而诱使浏览器对滚动区块使用橡皮筋效果，而不会把触摸事件向上传播到 DOM 树（引起整页滚动）。 javascript 的位操作符转换推断</description></item></channel></rss>
+ScrollFix 的原理是这样的，在触摸开始时，如果发现滚动区域已经处于极限状态时，就手工设置 scrollTop 的值，将滚动内容向边缘方向偏移 1px（这实际上改变了滚动区域的极限状态），从而诱使浏览器对滚动区块使用橡皮筋效果，而不会把触摸事件向上传播到 DOM 树（引起整页滚动）。 javascript 的位操作符转换推断</description></item><item><title/><link>https://hackftz.github.io/post/1/01/01/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/1/01/01/</guid><description>网上很多人说的修改host方法，已经行不通了。。
+199.232.69.194 github.global.ssl.fastly.net这个方法使用后速度会降低很多，实测从100多k降到10k，实在是有点坑！</description></item></channel></rss>
