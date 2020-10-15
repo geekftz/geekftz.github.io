@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Home on hackftz</title><link>https://hackftz.github.io/</link><description>Recent content in Home on hackftz</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 13 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://hackftz.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>深入理解TypeScript——文档篇之枚举</title><link>https://hackftz.github.io/post/2020/10/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E6%9E%9A%E4%B8%BE/</link><pubDate>Tue, 13 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E6%9E%9A%E4%B8%BE/</guid><description>一、概念 使用枚举我们可以定义一些带名字的常量。 我理解的是使用枚举，可以解决我们在项目中定义常量不规范的问题。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Home on hackftz</title><link>https://hackftz.github.io/</link><description>Recent content in Home on hackftz</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 15 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://hackftz.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2020/10/15/hacker-with-horn/</link><pubDate>Thu, 15 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/15/hacker-with-horn/</guid><description>网上很多人说的修改host方法，已经行不通了。。
+199.232.69.194 github.global.ssl.fastly.net这个方法使用后速度会降低很多，实测从100多k降到10k，实在是有点坑！</description></item><item><title>深入理解TypeScript——文档篇之枚举</title><link>https://hackftz.github.io/post/2020/10/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E6%9E%9A%E4%B8%BE/</link><pubDate>Tue, 13 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E6%9E%9A%E4%B8%BE/</guid><description>一、概念 使用枚举我们可以定义一些带名字的常量。 我理解的是使用枚举，可以解决我们在项目中定义常量不规范的问题。
 数字枚举
 // 使用初始化器 enum Direction { // 定义数字枚举 Up = 1, // 使用初始化器，初始值1 Down, // 2 Left, // 3 Right // 4 // ...定义依次递增 } // 不使用初始化器 enum Direction { Up, // 0 Down, // 1 Left, Right, } 通过枚举的属性来访问枚举成员，和枚举的名字来访问枚举类型
 enum Response { No = 0, Yes = 1, } function respond(recipient: string, message: Response): void { console.log(recipient + &amp;#39; &amp;#39; + message); } respond(&amp;#34;Princess Caroline&amp;#34;, Response.</description></item><item><title>深入理解TypeScript——文档篇之泛型</title><link>https://hackftz.github.io/post/2020/10/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E6%B3%9B%E5%9E%8B/</link><pubDate>Tue, 13 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E6%B3%9B%E5%9E%8B/</guid><description>一、介绍 类型变量，它是一种特殊的变量，只用于表示类型而不是值。
@@ -9,7 +10,20 @@ let output = identity(&amp;#34;myString&amp;#34;); // type of output will be &am
 function identity&amp;lt;T&amp;gt;(arg: T): T { return arg; } let myIdentity: &amp;lt;T&amp;gt;(arg: T) =&amp;gt; T = identity; 可以使用不同的泛型参数名。
 function identity&amp;lt;T&amp;gt;(arg: T): T { return arg; } let myIdentity: &amp;lt;U&amp;gt;(arg: U) =&amp;gt; U = identity; 使用带有调用签名的对象字面量来定义。</description></item><item><title>深入理解TypeScript——文档篇之类型推断</title><link>https://hackftz.github.io/post/2020/10/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%AD/</link><pubDate>Tue, 13 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%AD/</guid><description>一、基础 TypeScript里，在有些没有明确指出类型的地方，类型推论会帮助提供类型
 let x = 3; // let x: number 二、最佳通用类型 计算通用类型算法会考虑所有的候选类型，并给出一个兼容所有候选类型的类型。
-// demo 1 let x = [0, 1, null, &amp;#39;haha&amp;#39;]; // let x: (string | number | null)[] // demo 2 class Rhino { constructor() { } } class Elephant { constructor() { } } class Snake { constructor() { } } let zoo = [new Rhino(), new Elephant(), new Snake()]; // let zoo: (Rhino | Elephant | Snake)[] 三、上下文类型 TypeScript类型推论也可能按照相反的方向进行。 这被叫做“按上下文归类”。按上下文归类会发生在表达式的类型与所处的位置相关时。</description></item><item><title>深入理解TypeScript——文档篇之函数</title><link>https://hackftz.github.io/post/2020/10/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E5%87%BD%E6%95%B0/</link><pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E5%87%BD%E6%95%B0/</guid><description>一、函数类型 定义函数类型
+// demo 1 let x = [0, 1, null, &amp;#39;haha&amp;#39;]; // let x: (string | number | null)[] // demo 2 class Rhino { constructor() { } } class Elephant { constructor() { } } class Snake { constructor() { } } let zoo = [new Rhino(), new Elephant(), new Snake()]; // let zoo: (Rhino | Elephant | Snake)[] 三、上下文类型 TypeScript类型推论也可能按照相反的方向进行。 这被叫做“按上下文归类”。按上下文归类会发生在表达式的类型与所处的位置相关时。</description></item><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2020/10/12/hacker-with-horn/</link><pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/12/hacker-with-horn/</guid><description>深入理解ts语法、用法、源码分析（暂时不用） 深入理解react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡record 打卡 2020-10-13
+离10月14号还有45分钟的时候 我开始写下了这篇当日计划
+今天熟悉了下ts的泛型、枚举、类型推断部分。
+其他：
+ES6中新添加的Array.prototype.fill 为什么框架很容易就走上大而全的不归之路？ 自定义元素 – 在 HTML 中定义新元素 10月14号 0:39分 网抑云ending
+2020-10-14
+类继承已经过时了——《设计模式：可复用面向对象软件的基础》downloaded 谈谈 jQuery 中的防冲突（noConflict）机制——avalonjs源码分析ing 通俗易懂了解Vue中nextTick的内部实现原理 前端异步解决方案——mmDeferred
+avalonjs中avalon.nexttick处理（setImmediate、MutationObserver、postMessage）avalon中在event事件中使用了window.postMessage来监听。
+vue中则是使用了MessageChannel(MessageChannel基本上是一个双向通信管道.可以把它想象成window.postMessage。window.onmessage的替代品 – 但是更简单,更易于配置.) js 宏任务和微任务——这里只做了定义，也没说怎么实现这个区分。 【Vue原理】NextTick - 源码版 之 宏微任务的抉择——withMacroTask的使用，通过事件注册节点来区分宏和微。 2020-10-15
+Deferred实现
+这个独立实现deferred在使用上来说不够优雅，Promise/A和Promise/A+更好。 深入研究-webkit-overflow-scrolling:touch及ios滚动
+解决问题：safari上，当超出高度，页面往下滑时，浏览器底部的工具栏会随着页面一起晃动（向下滚动时会拉起底部工具栏），造成了很不好的体验。
+解决方案：对inner content的min-height或者:after伪元素设置height加1%或1px。从而主动触发scrollbar。 ScrollFix.js：一个 iOS5 溢出滚动的（有限）修复方案
+ScrollFix 的原理是这样的，在触摸开始时，如果发现滚动区域已经处于极限状态时，就手工设置 scrollTop 的值，将滚动内容向边缘方向偏移 1px（这实际上改变了滚动区域的极限状态），从而诱使浏览器对滚动区块使用橡皮筋效果，而不会把触摸事件向上传播到 DOM 树（引起整页滚动）。 javascript 的位操作符转换推断</description></item><item><title>深入理解TypeScript——文档篇之函数</title><link>https://hackftz.github.io/post/2020/10/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E5%87%BD%E6%95%B0/</link><pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E5%87%BD%E6%95%B0/</guid><description>一、函数类型 定义函数类型
 // 函数式声明 function add(x: number, y: number): number { return x + y; } // 由变量指向的匿名函数 let myAdd = function(x: number, y: number): number { return x + y; }; 完整函数类型
 let myAdd: (x: number, y: number) =&amp;gt; number = function(x: number, y: number): number { return x + y; }; 通常需要将类型抽离成接口，形成规范。
 推断类型
@@ -104,18 +118,4 @@ face: string;
 function describe(girl: Girl): string {
 let words = 'she has '
 let decs = Object.entries(girl)
-let len = decs.</description></item><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</link><pubDate>Mon, 23 Apr 2012 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2012/04/23/hacker-with-horn/</guid><description>深入理解ts语法、用法、源码分析（暂时不用） 深入理解react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡record 打卡 2020-10-13
-离10月14号还有45分钟的时候 我开始写下了这篇当日计划
-今天熟悉了下ts的泛型、枚举、类型推断部分。
-其他：
-ES6中新添加的Array.prototype.fill 为什么框架很容易就走上大而全的不归之路？ 自定义元素 – 在 HTML 中定义新元素 10月14号 0:39分 网抑云ending
-2020-10-14
-类继承已经过时了——《设计模式：可复用面向对象软件的基础》downloaded 谈谈 jQuery 中的防冲突（noConflict）机制——avalonjs源码分析ing 通俗易懂了解Vue中nextTick的内部实现原理 前端异步解决方案——mmDeferred
-avalonjs中avalon.nexttick处理（setImmediate、MutationObserver、postMessage）avalon中在event事件中使用了window.postMessage来监听。
-vue中则是使用了MessageChannel(MessageChannel基本上是一个双向通信管道.可以把它想象成window.postMessage。window.onmessage的替代品 – 但是更简单,更易于配置.) js 宏任务和微任务——这里只做了定义，也没说怎么实现这个区分。 【Vue原理】NextTick - 源码版 之 宏微任务的抉择——withMacroTask的使用，通过事件注册节点来区分宏和微。 2020-10-15
-Deferred实现
-这个独立实现deferred在使用上来说不够优雅，Promise/A和Promise/A+更好。 深入研究-webkit-overflow-scrolling:touch及ios滚动
-解决问题：safari上，当超出高度，页面往下滑时，浏览器底部的工具栏会随着页面一起晃动（向下滚动时会拉起底部工具栏），造成了很不好的体验。
-解决方案：对inner content的min-height或者:after伪元素设置height加1%或1px。从而主动触发scrollbar。 ScrollFix.js：一个 iOS5 溢出滚动的（有限）修复方案
-ScrollFix 的原理是这样的，在触摸开始时，如果发现滚动区域已经处于极限状态时，就手工设置 scrollTop 的值，将滚动内容向边缘方向偏移 1px（这实际上改变了滚动区域的极限状态），从而诱使浏览器对滚动区块使用橡皮筋效果，而不会把触摸事件向上传播到 DOM 树（引起整页滚动）。 javascript 的位操作符转换推断</description></item><item><title/><link>https://hackftz.github.io/post/1/01/01/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/1/01/01/</guid><description>网上很多人说的修改host方法，已经行不通了。。
-199.232.69.194 github.global.ssl.fastly.net这个方法使用后速度会降低很多，实测从100多k降到10k，实在是有点坑！</description></item></channel></rss>
+let len = decs.</description></item></channel></rss>
