@@ -1,13 +1,16 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Plan on hackftz</title><link>https://hackftz.github.io/categories/plan/</link><description>Recent content in Plan on hackftz</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 12 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://hackftz.github.io/categories/plan/index.xml" rel="self" type="application/rss+xml"/><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2020/10/12/hacker-with-horn/</link><pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/12/hacker-with-horn/</guid><description>深入理解ts语法、用法、源码分析（暂时不用） 深入理解react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡record 打卡 2020-10-22
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Plan on hackftz</title><link>https://hackftz.github.io/categories/plan/</link><description>Recent content in Plan on hackftz</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 12 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://hackftz.github.io/categories/plan/index.xml" rel="self" type="application/rss+xml"/><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2020/10/12/hacker-with-horn/</link><pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/12/hacker-with-horn/</guid><description>深入理解ts语法、用法、源码分析（暂时不用） 深入理解react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡record 打卡 2020-10-26
+useMemo和useCallback的使用
+useMemo：
+官方解释：把“创建”函数和依赖项数组作为参数传入 useMemo，它仅会在某个依赖项改变时才重新计算 memoized 值。这种优化有助于避免在每次渲染时都进行高开销的计算。
+个人定义：useMemo是为了减少不必要的重复计算。如果依赖无变化，会使用缓存的值；依赖变化的话，计算执行，并替换缓存值。
+useCallback：
+官方定义：把内联回调函数及依赖项数组作为参数传入 useCallback，它将返回该回调函数的 memoized 版本，该回调函数仅在某个依赖项改变时才会更新。当你把回调函数传递给经过优化的并使用引用相等性去避免非必要渲染（例如 shouldComponentUpdate）的子组件时，它将非常有用。
+个人定义：返回的可执行函数。
+个人定义：当你把回调函数传递给经过优化的并使用引用相等性去避免非必要渲染（例如 shouldComponentUpdate）的子组件时，它将非常有用。也就是说父组件传递一个函数给子组件的时候，由于父组件的更新会导致该函数重新生成从而传递给子组件的函数引用发生了变化，这就会导致子组件也会更新，而很多时候子组件的更新是没必要的，所以我们可以通过useCallback来缓存该函数，然后传递给子组件。 formdata实现原理（后续） 2020-10-24
 useState用法指南
-hooks中useState返回setXXX的用法，一种参数是直接赋值，一种是参数是匿名函数，两种之间的区别是：同步过程下没有区别，异步情况下，由于匿名函数中可以获取到prevXXX，所以可以获取到上一次状态，因此会在倒计时完成时触发一次次更新。 2020-10-21
+hooks中useState返回setXXX的用法，一种参数是直接赋值，一种是参数是匿名函数，两种之间的区别是：同步过程下没有区别，异步情况下，由于匿名函数中可以获取到prevXXX，所以可以获取到上一次状态，因此会在倒计时完成时触发一次次更新。 formdata实现原理（前言） 2020-10-21
 React 16 要更改组件的生命周期
 废弃了 componentWillMount，新增了 getDerivedStateFromProps。
 消失的 componentWillMount 与新增的 getSnapshotBeforeUpdate。 React 16 组件通信 父=&amp;gt;子： props
 子=&amp;gt;父： props event
-不同组件（兄弟组件）：(1) 弟弟 =&amp;gt; 父 =&amp;gt; 哥哥 (2) EventEmitter (发布订阅机制) 2020-10-15
-Deferred实现
-这个独立实现deferred在使用上来说不够优雅，Promise/A和Promise/A+更好。 深入研究-webkit-overflow-scrolling:touch及ios滚动
-解决问题：safari上，当超出高度，页面往下滑时，浏览器底部的工具栏会随着页面一起晃动（向下滚动时会拉起底部工具栏），造成了很不好的体验。
-解决方案：对inner content的min-height或者:after伪元素设置height加1%或1px。从而主动触发scrollbar。 ScrollFix.js：一个 iOS5 溢出滚动的（有限）修复方案
-ScrollFix 的原理是这样的，在触摸开始时，如果发现滚动区域已经处于极限状态时，就手工设置 scrollTop 的值，将滚动内容向边缘方向偏移 1px（这实际上改变了滚动区域的极限状态），从而诱使浏览器对滚动区块使用橡皮筋效果，而不会把触摸事件向上传播到 DOM 树（引起整页滚动）。 javascript 的位操作符转换推断</description></item></channel></rss>
+不同组件（兄弟组件）：(1) 弟弟 =&amp;gt; 父 =&amp;gt; 哥哥 (2) EventEmitter (发布订阅机制) 2020-10-15</description></item></channel></rss>
