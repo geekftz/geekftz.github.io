@@ -1,0 +1,145 @@
+<!doctype html><html lang=en-us><head><link rel=stylesheet href=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css><script src=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=manifest href=/images/site.webmanifest><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A simple, minimal blog for those who love text."><title>如何实现一个FormData | hackftz</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=https://hackftz.github.io/css/theme-override.css><header><nav><ul><li class=pull-left><a href=https://hackftz.github.io/>~/hackftz</a></li><li class=pull-left><a href=/categories/>~/categories</a></li><li class=pull-left><a href=/tags/>~/tags</a></li><li class=pull-right><a href=https://github.com/hackftz>~/github</a></li></ul></nav></header></head><body><br><div class=article-meta><h1><span class=title>如何实现一个FormData</span></h1><h2 class=author>hackftz</h2><h2 class=date>2020/10/26</h2><p class=terms>Categories: <a href=/categories/javascript>JavaScript</a>
+Tags: <a href=/tags/2020-10>2020-10</a></p></div><div class=content-wrapper><main><h4 id=一前言>一、前言</h4><p>最近项目中遇到一个问题，我们需要在cocos项目里去上传音频文件，而cocos原生环境和平时我们开发所在的浏览器环境和Node环境有很多差异，而cocos环境只提供了基础类，没有提供FormData这种封装类。</p><p>所以问题来了？如何实现一个FormData，以及怎么去使用它？</p><h4 id=二浏览器中的formdata>二、浏览器中的FormData</h4><p>这里我列一个最简单的例子，我们来看看FormData到底是什么。 \</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-jsx data-lang=jsx><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>App</span>() {
+
+  <span style=color:#66d9ef>const</span> [<span style=color:#a6e22e>name</span>, <span style=color:#a6e22e>setName</span>] <span style=color:#f92672>=</span> <span style=color:#a6e22e>useState</span>(<span style=color:#e6db74>&#39;&#39;</span>)
+  <span style=color:#66d9ef>const</span> [<span style=color:#a6e22e>age</span>, <span style=color:#a6e22e>setAge</span>] <span style=color:#f92672>=</span> <span style=color:#a6e22e>useState</span>(<span style=color:#ae81ff>0</span>)
+  <span style=color:#66d9ef>const</span> [<span style=color:#a6e22e>file</span>, <span style=color:#a6e22e>setFile</span>] <span style=color:#f92672>=</span> <span style=color:#a6e22e>useState</span>&lt;<span style=color:#f92672>File</span> <span style=color:#960050;background-color:#1e0010>|</span> <span style=color:#a6e22e>null</span>&gt;()
+
+  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>submit</span> <span style=color:#f92672>=</span> () =&gt; {
+    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>name</span>, <span style=color:#a6e22e>age</span>);
+
+    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>file</span>);
+
+    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>fd</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>FormData</span>()
+    <span style=color:#a6e22e>fd</span>.<span style=color:#a6e22e>append</span>(<span style=color:#e6db74>&#39;name&#39;</span>, <span style=color:#a6e22e>name</span>)
+    <span style=color:#a6e22e>fd</span>.<span style=color:#a6e22e>append</span>(<span style=color:#e6db74>&#39;age&#39;</span>, <span style=color:#a6e22e>age</span>.<span style=color:#a6e22e>toString</span>())
+    <span style=color:#a6e22e>fd</span>.<span style=color:#a6e22e>append</span>(<span style=color:#e6db74>&#39;file&#39;</span>, <span style=color:#a6e22e>file</span> <span style=color:#a6e22e>as</span> <span style=color:#a6e22e>Blob</span>)
+
+    <span style=color:#a6e22e>$</span>.<span style=color:#a6e22e>ajax</span>({
+      <span style=color:#a6e22e>type</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#34;POST&#34;</span>,
+      <span style=color:#a6e22e>url</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#34;www.happy.com&#34;</span>,
+      <span style=color:#a6e22e>data</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>fd</span>,
+      <span style=color:#a6e22e>processData</span><span style=color:#f92672>:</span> <span style=color:#66d9ef>false</span>,<span style=color:#75715e>//重要
+</span><span style=color:#75715e></span>      <span style=color:#a6e22e>contentType</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;multipart/form-data&#39;</span>,<span style=color:#75715e>//重要
+</span><span style=color:#75715e></span>      <span style=color:#a6e22e>success</span><span style=color:#f92672>:</span> <span style=color:#66d9ef>function</span> (<span style=color:#a6e22e>data</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>any</span>) {
+      }
+    })
+  }
+  <span style=color:#66d9ef>return</span> (
+    &lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>className</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;App&#34;</span>&gt;
+      &lt;<span style=color:#f92672>form</span> <span style=color:#a6e22e>action</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;form_action.asp&#34;</span> <span style=color:#a6e22e>method</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;get&#34;</span>&gt;
+        &lt;<span style=color:#f92672>p</span>&gt;<span style=color:#a6e22e>name</span><span style=color:#f92672>:</span> &lt;<span style=color:#f92672>input</span> <span style=color:#a6e22e>type</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;text&#34;</span> <span style=color:#a6e22e>name</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;name&#34;</span> <span style=color:#a6e22e>value</span><span style=color:#f92672>=</span>{<span style=color:#a6e22e>name</span>} <span style=color:#a6e22e>onChange</span><span style=color:#f92672>=</span>{<span style=color:#a6e22e>e</span> =&gt; <span style=color:#a6e22e>setName</span>(<span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>currentTarget</span>.<span style=color:#a6e22e>value</span>)} /&gt;&lt;/<span style=color:#f92672>p</span>&gt;
+        &lt;<span style=color:#f92672>p</span>&gt;<span style=color:#a6e22e>age</span><span style=color:#f92672>:</span> &lt;<span style=color:#f92672>input</span> <span style=color:#a6e22e>type</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;number&#34;</span> <span style=color:#a6e22e>name</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;age&#34;</span> <span style=color:#a6e22e>value</span><span style=color:#f92672>=</span>{<span style=color:#a6e22e>age</span>} <span style=color:#a6e22e>onChange</span><span style=color:#f92672>=</span>{<span style=color:#a6e22e>e</span> =&gt; <span style=color:#a6e22e>setAge</span>(Number(<span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>currentTarget</span>.<span style=color:#a6e22e>value</span>))} /&gt;&lt;/<span style=color:#f92672>p</span>&gt;
+        &lt;<span style=color:#f92672>p</span>&gt;<span style=color:#a6e22e>file</span><span style=color:#f92672>:</span>&lt;<span style=color:#f92672>input</span> <span style=color:#a6e22e>type</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;file&#34;</span> <span style=color:#a6e22e>name</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;file&#34;</span> <span style=color:#a6e22e>onChange</span><span style=color:#f92672>=</span>{<span style=color:#a6e22e>e</span> =&gt; <span style=color:#a6e22e>setFile</span>(<span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>target</span>.<span style=color:#a6e22e>files</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>target</span>.<span style=color:#a6e22e>files</span>[<span style=color:#ae81ff>0</span>])}/&gt;
+        &lt;/<span style=color:#f92672>p</span>&gt;
+        &lt;<span style=color:#f92672>input</span> <span style=color:#a6e22e>type</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;button&#34;</span> <span style=color:#a6e22e>name</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;b1&#34;</span> <span style=color:#a6e22e>value</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;submit&#34;</span> <span style=color:#a6e22e>onClick</span><span style=color:#f92672>=</span>{() =&gt; <span style=color:#a6e22e>submit</span>()} /&gt;
+      &lt;/<span style=color:#f92672>form</span>&gt;
+    &lt;/<span style=color:#f92672>div</span>&gt;
+  );
+}
+</code></pre></div><p><strong>FormData</strong>：FormData 接口提供了一种表示表单数据的键值对 key-value 的构造方式，并且可以轻松的将数据通过XMLHttpRequest.send() 方法发送出去，本接口和此方法都相当简单直接。如果送出时的编码类型被设为 &ldquo;multipart/form-data&rdquo;，它会使用和表单一样的格式。（摘自MDN）</p><p>大多数文章里，只给了这样的一种描述或者说是概念，它是一个接口类，用来做上传用，我们来看它在数据形式上体现的是什么。</p><p>下面是chrome devtool request payload里的样子。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-http data-lang=http><span style=color:#960050;background-color:#1e0010>------WebKitFormBoundaryuhGsgTdqAAltAXy7 // 分隔/边界符
+</span><span style=color:#960050;background-color:#1e0010>Content-Disposition: form-data; name=&#34;name&#34; // 内联形式
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>hackftz // value
+</span><span style=color:#960050;background-color:#1e0010>------WebKitFormBoundaryuhGsgTdqAAltAXy7
+</span><span style=color:#960050;background-color:#1e0010>Content-Disposition: form-data; name=&#34;age&#34;
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>22
+</span><span style=color:#960050;background-color:#1e0010>------WebKitFormBoundaryuhGsgTdqAAltAXy7
+</span><span style=color:#960050;background-color:#1e0010>Content-Disposition: form-data; name=&#34;file&#34;; filename=&#34;Minstrel - eyecatch!.mp3&#34;
+</span><span style=color:#960050;background-color:#1e0010>Content-Type: audio/mpeg
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>------WebKitFormBoundaryuhGsgTdqAAltAXy7-- // 这里是end_boundary，结尾分隔/边界符，必需！
+</span></code></pre></div><h4 id=三我在实现formdata时遇到了哪些坑>三、我在实现FormData时遇到了哪些坑？</h4><p>先贴代码，然后说说我遇到了哪些坑。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>default</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyFormData</span> {
+  <span style=color:#75715e>// 将随机数传入构造函数
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>constructor</span>(<span style=color:#a6e22e>stamp</span>) {
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_boundary_key</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>stamp</span>; <span style=color:#75715e>// 随机数，分隔符和结尾分隔符必需。
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_boundary</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;--&#39;</span> <span style=color:#f92672>+</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_boundary_key</span>;
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_end_boundary</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_boundary</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;--&#39;</span>;
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span> <span style=color:#f92672>=</span> [];
+	}
+	<span style=color:#75715e>// 上传普通键值对——字符串、数字
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>append</span>(<span style=color:#a6e22e>key</span>, <span style=color:#a6e22e>value</span>) {
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>push</span>(<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_boundary</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;\r\n&#39;</span>);
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>push</span>(<span style=color:#e6db74>&#39;Content-Disposition: form-data; name=&#34;&#39;</span> <span style=color:#f92672>+</span> <span style=color:#a6e22e>key</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;&#34;&#39;</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;\r\n\r\n&#39;</span>);
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>push</span>(<span style=color:#a6e22e>value</span>);
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>push</span>(<span style=color:#e6db74>&#39;\r\n&#39;</span>);
+	}
+	<span style=color:#75715e>// 上传复杂数据——文件
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>appendFile</span>(<span style=color:#a6e22e>name</span>, <span style=color:#a6e22e>data</span>, <span style=color:#a6e22e>ext</span>){
+		<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>type</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;audio/mpeg&#34;</span>;
+		<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>filename</span> <span style=color:#f92672>=</span>  <span style=color:#e6db74>&#34;upload.&#34;</span><span style=color:#f92672>+</span><span style=color:#a6e22e>ext</span>;
+
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>push</span>(<span style=color:#e6db74>`</span><span style=color:#e6db74>${</span><span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_boundary</span><span style=color:#e6db74>}</span><span style=color:#960050;background-color:#1e0010>\</span><span style=color:#e6db74>r</span><span style=color:#960050;background-color:#1e0010>\</span><span style=color:#e6db74>n`</span>);
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>push</span>(<span style=color:#e6db74>`Content-Disposition: form-data; name=&#34;</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>name</span><span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;; filename=&#34;</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>filename</span><span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span><span style=color:#960050;background-color:#1e0010>\</span><span style=color:#e6db74>r</span><span style=color:#960050;background-color:#1e0010>\</span><span style=color:#e6db74>n`</span>); <span style=color:#75715e>// 上传文件定义
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>push</span>(<span style=color:#e6db74>`Content-Type: </span><span style=color:#e6db74>${</span><span style=color:#a6e22e>type</span><span style=color:#e6db74>}</span><span style=color:#960050;background-color:#1e0010>\</span><span style=color:#e6db74>r</span><span style=color:#960050;background-color:#1e0010>\</span><span style=color:#e6db74>n`</span>);
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>push</span>(<span style=color:#e6db74>&#34;\r\n&#34;</span>);
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>push</span>(<span style=color:#a6e22e>data</span>);
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>push</span>(<span style=color:#e6db74>&#34;\r\n&#34;</span>);
+	}
+	<span style=color:#75715e>// 获取二进制数据 get
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>get</span> <span style=color:#a6e22e>arrayBuffer</span>() {
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>push</span>(<span style=color:#e6db74>&#39;\r\n&#39;</span> <span style=color:#f92672>+</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_end_boundary</span>); <span style=color:#75715e>// 结尾分隔符
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>charArr</span> <span style=color:#f92672>=</span> [];
+        
+        <span style=color:#75715e>// 处理charCode
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> <span style=color:#f92672>&lt;</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>.<span style=color:#a6e22e>length</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span>) { <span style=color:#75715e>// 取出文本的charCode（10进制
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>item</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_result</span>[<span style=color:#a6e22e>i</span>];
+			<span style=color:#66d9ef>if</span>( <span style=color:#66d9ef>typeof</span>(<span style=color:#a6e22e>item</span>) <span style=color:#f92672>===</span> <span style=color:#e6db74>&#39;string&#39;</span>){
+				<span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>s</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>s</span> <span style=color:#f92672>&lt;</span> <span style=color:#a6e22e>item</span>.<span style=color:#a6e22e>length</span>; <span style=color:#a6e22e>s</span><span style=color:#f92672>++</span>){
+					<span style=color:#a6e22e>charArr</span>.<span style=color:#a6e22e>push</span>(<span style=color:#a6e22e>item</span>.<span style=color:#a6e22e>charCodeAt</span>(<span style=color:#a6e22e>s</span>));
+				}
+			} <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span>(<span style=color:#66d9ef>typeof</span>(<span style=color:#a6e22e>item</span>) <span style=color:#f92672>===</span> <span style=color:#e6db74>&#39;number&#39;</span>) {
+				<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>numstr</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>item</span>.<span style=color:#a6e22e>toString</span>()
+
+				<span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>s</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>s</span> <span style=color:#f92672>&lt;</span> <span style=color:#a6e22e>numstr</span>.<span style=color:#a6e22e>length</span>; <span style=color:#a6e22e>s</span><span style=color:#f92672>++</span>){
+					<span style=color:#a6e22e>charArr</span>.<span style=color:#a6e22e>push</span>(<span style=color:#a6e22e>numstr</span>.<span style=color:#a6e22e>charCodeAt</span>(<span style=color:#a6e22e>s</span>));
+				}
+			} <span style=color:#66d9ef>else</span>{
+				<span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>j</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>j</span> <span style=color:#f92672>&lt;</span> <span style=color:#a6e22e>item</span>.<span style=color:#a6e22e>length</span>; <span style=color:#a6e22e>j</span><span style=color:#f92672>++</span>){
+						<span style=color:#a6e22e>charArr</span>.<span style=color:#a6e22e>push</span>(<span style=color:#a6e22e>item</span>[<span style=color:#a6e22e>j</span>]);
+				}
+			}
+				
+		}
+		<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>array</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Uint8Array</span>(<span style=color:#a6e22e>charArr</span>);
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>array</span>.<span style=color:#a6e22e>buffer</span>;
+	}
+}
+
+</code></pre></div><p><strong>踩坑记录：</strong></p><ol><li>首先，我需要定义一个boundary_key，它当前环境提供给FormData的随机数，chrome v87.0.4270.0提供给FormData的是"WebKitFormBoundary&rdquo; + &ldquo;xxxxxxxxxxxxxx&rdquo; 随机数。我在项目里使用的是timestamp，这里只要提供一个随机数即可。</li><li>appendFile方法的实现，要根据具体上传类型，文件类型，作content-type定义，比如我这里上传的是音频文件，所以设置的是"audio/mpeg&rdquo;。</li><li>普通键值对和复杂键值对的区分，如果value是字符串，直接分解成字符再处理；如果是number，这里有个坑，那就是直接添加到FormData会失败，所以需要先把number值转为string，再像处理string值一样处理。</li><li>再看arrayBuffer实现方法，我们可以得知FormData最终要给api data的值是一个由具体blob值，分解为单个字符，存储到一个字符数组中，再创建一个参数为字符数组的新的Uint8Array数组，最终可以将这样一个arrayBuffer数据（通用的、固定长度的原始二进制数据缓冲区。）提供给服务器去解析。</li></ol><p>以上是封装FormData中我遇到的问题，再来看怎么去使用这样一个我们自定义的FormData。</p><h4 id=四myformdata的使用>四、MyFormData的使用</h4><p>话不多说，先贴代码，再谈问题：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>stamp</span> <span style=color:#f92672>=</span> Date.<span style=color:#a6e22e>now</span>() <span style=color:#75715e>// 生成随机数，这里使用了时间戳
+</span><span style=color:#75715e></span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>fd</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>MyFormData</span>(<span style=color:#a6e22e>stamp</span>)
+
+<span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>key</span> <span style=color:#66d9ef>in</span> <span style=color:#a6e22e>data</span>) {
+	<span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>data</span>.<span style=color:#a6e22e>hasOwnProperty</span>(<span style=color:#a6e22e>key</span>)) {
+		<span style=color:#a6e22e>fd</span>.<span style=color:#a6e22e>append</span>(<span style=color:#a6e22e>key</span>, <span style=color:#a6e22e>data</span>[<span style=color:#a6e22e>key</span>])
+	}
+}
+
+<span style=color:#a6e22e>fd</span>.<span style=color:#a6e22e>appendFile</span>(<span style=color:#e6db74>&#39;file&#39;</span>, <span style=color:#a6e22e>blob</span>, <span style=color:#a6e22e>data</span>.<span style=color:#a6e22e>fileExtName</span>); <span style=color:#75715e>// 添加要上传的文件，这里记得第三个参数要传入文件后缀名。
+</span><span style=color:#75715e></span>
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>config</span> <span style=color:#f92672>=</span> {
+	<span style=color:#a6e22e>headers</span><span style=color:#f92672>:</span> {
+		<span style=color:#e6db74>&#39;Content-Type&#39;</span><span style=color:#f92672>:</span> <span style=color:#e6db74>`multipart/form-data; boundary=</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>stamp</span><span style=color:#e6db74>}</span><span style=color:#e6db74>`</span> <span style=color:#75715e>// 分隔符
+</span><span style=color:#75715e></span>	},
+};
+
+<span style=color:#a6e22e>axios</span>({
+	<span style=color:#a6e22e>url</span>,
+	<span style=color:#a6e22e>data</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>fd</span>.<span style=color:#a6e22e>arrayBuffer</span>,
+	<span style=color:#a6e22e>method</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;POST&#39;</span>,
+	<span style=color:#a6e22e>headers</span>
+})
+	.<span style=color:#a6e22e>then</span>(<span style=color:#a6e22e>response</span> =&gt; {
+		<span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>response</span>.<span style=color:#a6e22e>status</span> <span style=color:#f92672>===</span> <span style=color:#ae81ff>200</span>) {
+			<span style=color:#66d9ef>const</span> { <span style=color:#a6e22e>data</span> } <span style=color:#f92672>=</span> <span style=color:#a6e22e>response</span>;
+			<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#34;fun -&gt; JSON.stringify(data)&#34;</span>, <span style=color:#a6e22e>JSON</span>.<span style=color:#a6e22e>stringify</span>(<span style=color:#a6e22e>data</span>))
+		}
+	})
+	.<span style=color:#66d9ef>catch</span>(<span style=color:#a6e22e>err</span> =&gt; {
+		<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>err</span>);
+	});
+</code></pre></div><p><strong>踩坑记录：</strong></p><ol><li>因为我们上传的是二进制流数据，appendFile函数添加后缀名，在formdata数据里定义好Content-Disposition里的文件名，方便和后端开发人员识别是什么样的文件，是有必要的。</li><li>request headers里注意<code>multipart/form-data; boundary=${stamp}</code>这里一定要把随机数写到<code>boundary=</code>后面，否则后端服务会报错&rsquo;no multipart boundary was found&rsquo;</li></ol><h4 id=五如果觉得有帮助的话还请给个赞谢谢>五、如果觉得有帮助的话，还请给个赞，谢谢！</h4><a href=/>>> Home</a></main></div><footer><script>(function(){function center_el(tagName){var tags=document.getElementsByTagName(tagName),i,tag;for(i=0;i<tags.length;i++){tag=tags[i];var parent=tag.parentElement;if(parent.childNodes.length===1){if(parent.nodeName==='A'){parent=parent.parentElement;if(parent.childNodes.length!=1)continue;}
+if(parent.nodeName==='P')parent.style.textAlign='center';}}}
+var tagNames=['img','embed','object'];for(var i=0;i<tagNames.length;i++){center_el(tagNames[i]);}})();</script><hr>公众号: KeepinJS | <a href=mailto:472849306@qq.com>Email</a></footer></body></html>

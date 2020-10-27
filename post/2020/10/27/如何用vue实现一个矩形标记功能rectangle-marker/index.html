@@ -1,0 +1,455 @@
+<!doctype html><html lang=en-us><head><link rel=stylesheet href=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css><script src=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=manifest href=/images/site.webmanifest><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A simple, minimal blog for those who love text."><title>如何用vue实现一个矩形标记功能（rectangle marker） | hackftz</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=https://hackftz.github.io/css/theme-override.css><header><nav><ul><li class=pull-left><a href=https://hackftz.github.io/>~/hackftz</a></li><li class=pull-left><a href=/categories/>~/categories</a></li><li class=pull-left><a href=/tags/>~/tags</a></li><li class=pull-right><a href=https://github.com/hackftz>~/github</a></li></ul></nav></header></head><body><br><div class=article-meta><h1><span class=title>如何用vue实现一个矩形标记功能（rectangle marker）</span></h1><h2 class=author>hackftz</h2><h2 class=date>2020/10/27</h2><p class=terms>Categories: <a href=/categories/vue>Vue</a>
+Tags: <a href=/tags/2020-10>2020-10</a></p></div><div class=content-wrapper><main><p>代码地址：<a href=https://github.com/hackftz/vue-rectangle-marker>vue-rectangle-marker</a></p><h4 id=一前言>一、前言</h4><p>一些cms系统经常会用到区域标记功能，所以写了个用vue实现的矩形标记区域，包含拖拽、放大缩小、重置功能。</p><h4 id=二实现结果>二、实现结果</h4><ol><li><p>初始
+<img src=https://i.loli.net/2020/10/27/WayQ7M9rSgsV8Zt.jpg alt=init.jpg></p></li><li><p>标记<br><img src=https://i.loli.net/2020/10/27/1rMPl9IceBJFz3o.jpg alt=mark.jpg></p></li></ol><h4 id=三代码实现>三、代码实现</h4><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-vue data-lang=vue>&lt;<span style=color:#f92672>template</span>&gt;
+	&lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>class</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;rectangle-marker&#34;</span>&gt;
+		&lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>class</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;mark-wrap&#34;</span>&gt;
+			&lt;<span style=color:#f92672>img</span> <span style=color:#a6e22e>ref</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;backImg&#34;</span> <span style=color:#f92672>:src</span><span style=color:#e6db74>=&#34;imgUrl&#34;</span> <span style=color:#a6e22e>class</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;img-responsive&#34;</span> <span style=color:#a6e22e>alt</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;响应式图像&#34;</span> <span style=color:#f92672>@load</span><span style=color:#e6db74>=&#34;onload&#34;</span>&gt;
+			&lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>class</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;draw-rect&#34;</span> <span style=color:#f92672>:</span><span style=color:#a6e22e>class</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;{ &#39;no-event&#39;: disabled }&#34;</span> <span style=color:#f92672>@mousemove</span><span style=color:#e6db74>=&#34;mouseMove&#34;</span>
+				<span style=color:#f92672>@mousedown</span><span style=color:#e6db74>=&#34;mouseDown&#34;</span> <span style=color:#f92672>@mouseup</span><span style=color:#e6db74>=&#34;mouseUp&#34;</span>&gt;
+				&lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>ref</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;box&#34;</span> <span style=color:#f92672>v-if</span><span style=color:#e6db74>=&#34;boxVisible&#34; :id=&#34;boxId&#34; class=&#34;box&#34;
+</span><span style=color:#e6db74>					:style=&#34;{ width: boxW + &#39;px&#39;, height: boxH + &#39;px&#39;, left: boxL + &#39;px&#39;, top: boxT + &#39;px&#39; }&#34;&gt;
+</span><span style=color:#e6db74>					&lt;div id=&#34;upleftbtn&#34; class=&#34;upleftbtn&#34; @mousedown=&#34;onUpleftbtn&#34;&gt;&lt;/div&gt;
+</span><span style=color:#e6db74>					&lt;div id=&#34;uprightbtn&#34; class=&#34;uprightbtn&#34; @mousedown=&#34;onUpRightbtn&#34;&gt;&lt;/div&gt;
+</span><span style=color:#e6db74>					&lt;div id=&#34;downleftbtn&#34; class=&#34;downleftbtn&#34; @mousedown=&#34;onDownleftbtn&#34;&gt;&lt;/div&gt;
+</span><span style=color:#e6db74>					&lt;div id=&#34;downrightbtn&#34; class=&#34;downrightbtn&#34; @mousedown=&#34;onDownRightbtn&#34;&gt;&lt;/div&gt;
+</span><span style=color:#e6db74>				&lt;/div&gt;
+</span><span style=color:#e6db74>			&lt;/div&gt;
+</span><span style=color:#e6db74>
+</span><span style=color:#e6db74>			&lt;transition name=&#34;fade&#34;&gt;
+</span><span style=color:#e6db74>				&lt;div v-if=&#34;showBtns &amp;&amp; !markFlag&#34; class=&#34;act-btns&#34; @mouseleave=&#34;mouseLeave&#34;&gt;
+</span><span style=color:#e6db74>					&lt;button @click=&#34;mark&#34;&gt;mark&lt;/button&gt;&amp;nbsp;&amp;nbsp;
+</span><span style=color:#e6db74>					&lt;button @click=&#34;reset&#34;&gt;reset&lt;/button&gt;
+</span><span style=color:#e6db74>				&lt;/div&gt;
+</span><span style=color:#e6db74>			&lt;/transition&gt;
+</span><span style=color:#e6db74>		&lt;/div&gt;
+</span><span style=color:#e6db74>	&lt;/div&gt;
+</span><span style=color:#e6db74>&lt;/template&gt;
+</span><span style=color:#e6db74>
+</span><span style=color:#e6db74>&lt;script&gt;
+</span><span style=color:#e6db74>	export default {
+</span><span style=color:#e6db74>		name: &#39;rectangleMarker&#39;,
+</span><span style=color:#e6db74>		data() {
+</span><span style=color:#e6db74>			return {
+</span><span style=color:#e6db74>				imgW: 0,
+</span><span style=color:#e6db74>				imgH: 0,
+</span><span style=color:#e6db74>				showBtns: true,
+</span><span style=color:#e6db74>				markFlag: false,
+</span><span style=color:#e6db74>				// 鼠标事件属性
+</span><span style=color:#e6db74>				dragging: false,
+</span><span style=color:#e6db74>				startX: undefined,
+</span><span style=color:#e6db74>				startY: undefined,
+</span><span style=color:#e6db74>				diffX: undefined,
+</span><span style=color:#e6db74>				diffY: undefined,
+</span><span style=color:#e6db74>				obj: null, //当前操作对象
+</span><span style=color:#e6db74>				box: null, //要处理的对象
+</span><span style=color:#e6db74>				backImgRect: null,
+</span><span style=color:#e6db74>				boxId: &#39;&#39;,
+</span><span style=color:#e6db74>				boxW: 0,
+</span><span style=color:#e6db74>				boxH: 0,
+</span><span style=color:#e6db74>				boxL: 0,
+</span><span style=color:#e6db74>				boxT: 0,
+</span><span style=color:#e6db74>				boxVisible: false
+</span><span style=color:#e6db74>			}
+</span><span style=color:#e6db74>		},
+</span><span style=color:#e6db74>		props: {
+</span><span style=color:#e6db74>			imgUrl: {
+</span><span style=color:#e6db74>				type: String,
+</span><span style=color:#e6db74>				required: true,
+</span><span style=color:#e6db74>				default: &#39;&#39;
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			disabled: {
+</span><span style=color:#e6db74>				type: Boolean,
+</span><span style=color:#e6db74>				default: false
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			value: {
+</span><span style=color:#e6db74>				type: Array,
+</span><span style=color:#e6db74>				default: function () {
+</span><span style=color:#e6db74>					return []
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>			}
+</span><span style=color:#e6db74>		},
+</span><span style=color:#e6db74>		methods: {
+</span><span style=color:#e6db74>			onload() {
+</span><span style=color:#e6db74>				let rect = this.$refs.backImg.getBoundingClientRect()
+</span><span style=color:#e6db74>				this.backImgRect = {
+</span><span style=color:#e6db74>					height: rect.height,
+</span><span style=color:#e6db74>					width: rect.width
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>				// console.log(&#34;initConfig -&gt; this.backImgRect&#34;, this.backImgRect)
+</span><span style=color:#e6db74>				if (this.value === &#39;&#39; || this.value === undefined || this.value === null || (Array.isArray(this.value) &amp;&amp; this.value.length === 0)) {
+</span><span style=color:#e6db74>					return
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>				this.initData(this.value)
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			mouseLeave() {
+</span><span style=color:#e6db74>				this.showBtns = false
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			mark() {
+</span><span style=color:#e6db74>				this.markFlag = true
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			reset() {
+</span><span style=color:#e6db74>				this.boxVisible = false
+</span><span style=color:#e6db74>				this.boxId = &#39;&#39;
+</span><span style=color:#e6db74>				this.boxH = 0
+</span><span style=color:#e6db74>				this.boxW = 0
+</span><span style=color:#e6db74>				this.boxL = 0
+</span><span style=color:#e6db74>				this.boxT = 0
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			initData(data) {
+</span><span style=color:#e6db74>				if (data === &#39;&#39; || data === undefined || data === null || (Array.isArray(data) &amp;&amp; data.length === 0)) {
+</span><span style=color:#e6db74>					return
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>				
+</span><span style=color:#e6db74>				this.boxId = &#39;changeBox&#39;
+</span><span style=color:#e6db74>				this.boxL = data[0][0] * this.backImgRect.width
+</span><span style=color:#e6db74>				this.boxT = data[0][1] * this.backImgRect.height
+</span><span style=color:#e6db74>				this.boxH =  (data[3][1] - data[0][1]) * this.backImgRect.height
+</span><span style=color:#e6db74>				this.boxW = (data[1][0] - data[0][0]) * this.backImgRect.width
+</span><span style=color:#e6db74>				this.boxVisible = true
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			mouseDown(e) {
+</span><span style=color:#e6db74>				if (!this.markFlag &amp;&amp; !this.boxVisible) {
+</span><span style=color:#e6db74>					return
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>				this.startX = e.offsetX;
+</span><span style=color:#e6db74>				this.startY = e.offsetY;
+</span><span style=color:#e6db74>				// 如果鼠标在 box 上被按下
+</span><span style=color:#e6db74>				if (e.target.className.match(/box/)) {
+</span><span style=color:#e6db74>					// 允许拖动
+</span><span style=color:#e6db74>					this.dragging = true;
+</span><span style=color:#e6db74>					// 设置当前 box 的 id 为 movingBox
+</span><span style=color:#e6db74>					if (this.boxId !== &#39;movingBox&#39;) {
+</span><span style=color:#e6db74>						this.boxId = &#39;movingBox&#39;
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>					// 计算坐标差值
+</span><span style=color:#e6db74>					this.diffX = this.startX
+</span><span style=color:#e6db74>					this.diffY = this.startY
+</span><span style=color:#e6db74>				} else {
+</span><span style=color:#e6db74>					if (this.boxId === &#39;changeBox&#39;) {
+</span><span style=color:#e6db74>						return
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>					this.boxId = &#39;activeBox&#39;
+</span><span style=color:#e6db74>					this.boxT = this.startY
+</span><span style=color:#e6db74>					this.boxL = this.startX
+</span><span style=color:#e6db74>					this.boxVisible = true
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			mouseMove(e) {
+</span><span style=color:#e6db74>				if (!this.markFlag &amp;&amp; !this.boxVisible) {
+</span><span style=color:#e6db74>					if (!this.backImgRect) {
+</span><span style=color:#e6db74>						return
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>					let toRight = this.backImgRect.width - e.offsetX
+</span><span style=color:#e6db74>					let toTop = e.offsetY
+</span><span style=color:#e6db74>					if (toRight &lt;= 100 &amp;&amp; toTop &lt;= 40) {
+</span><span style=color:#e6db74>						this.showBtns = true
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>					return
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>				let toRight = this.backImgRect.width - e.offsetX
+</span><span style=color:#e6db74>					let toTop = e.offsetY
+</span><span style=color:#e6db74>					if (toRight &lt;= 100 &amp;&amp; toTop &lt;= 40) {
+</span><span style=color:#e6db74>						this.showBtns = true
+</span><span style=color:#e6db74>						return
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>				// 更新 box 尺寸
+</span><span style=color:#e6db74>				if (this.boxId === &#39;activeBox&#39;) {
+</span><span style=color:#e6db74>					this.boxW = e.offsetX - this.startX
+</span><span style=color:#e6db74>					this.boxH = e.offsetY - this.startY
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>				// 移动，更新 box 坐标
+</span><span style=color:#e6db74>				if (this.boxId === &#39;movingBox&#39; &amp;&amp; this.dragging) {
+</span><span style=color:#e6db74>					let realTop = (e.offsetY + e.target.offsetTop - this.diffY) &gt; 0 ? (e.offsetY + e.target.offsetTop -
+</span><span style=color:#e6db74>						this.diffY) : 0
+</span><span style=color:#e6db74>					let realLeft = (e.offsetX + e.target.offsetLeft - this.diffX) &gt; 0 ? (e.offsetX + e.target.offsetLeft -
+</span><span style=color:#e6db74>						this.diffX) : 0
+</span><span style=color:#e6db74>					let maxTop = this.backImgRect.height - this.$refs.box.offsetHeight
+</span><span style=color:#e6db74>					let maxLeft = this.backImgRect.width - this.$refs.box.offsetWidth
+</span><span style=color:#e6db74>					realTop = realTop &gt;= maxTop ? maxTop : realTop
+</span><span style=color:#e6db74>					realLeft = realLeft &gt;= maxLeft ? maxLeft : realLeft
+</span><span style=color:#e6db74>					this.boxT = realTop;
+</span><span style=color:#e6db74>					this.boxL = realLeft;
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>				if (this.obj) {
+</span><span style=color:#e6db74>					e = e || window.event;
+</span><span style=color:#e6db74>					var location = {
+</span><span style=color:#e6db74>						x: e.x || e.offsetX,
+</span><span style=color:#e6db74>						y: e.y || e.offsetY
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>					switch (this.obj.operateType) {
+</span><span style=color:#e6db74>						case &#34;nw&#34;:
+</span><span style=color:#e6db74>							this.move(&#39;n&#39;, location, this.$refs.box);
+</span><span style=color:#e6db74>							this.move(&#39;w&#39;, location, this.$refs.box);
+</span><span style=color:#e6db74>							break;
+</span><span style=color:#e6db74>						case &#34;ne&#34;:
+</span><span style=color:#e6db74>							this.move(&#39;n&#39;, location, this.$refs.box);
+</span><span style=color:#e6db74>							this.move(&#39;e&#39;, location, this.$refs.box);
+</span><span style=color:#e6db74>							break;
+</span><span style=color:#e6db74>						case &#34;sw&#34;:
+</span><span style=color:#e6db74>							this.move(&#39;s&#39;, location, this.$refs.box);
+</span><span style=color:#e6db74>							this.move(&#39;w&#39;, location, this.$refs.box);
+</span><span style=color:#e6db74>							break;
+</span><span style=color:#e6db74>						case &#34;se&#34;:
+</span><span style=color:#e6db74>							this.move(&#39;s&#39;, location, this.$refs.box);
+</span><span style=color:#e6db74>							this.move(&#39;e&#39;, location, this.$refs.box);
+</span><span style=color:#e6db74>							break;
+</span><span style=color:#e6db74>						case &#34;move&#34;:
+</span><span style=color:#e6db74>							this.move(&#39;move&#39;, location, this.box);
+</span><span style=color:#e6db74>							break;
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			mouseUp() {
+</span><span style=color:#e6db74>				if (!this.markFlag &amp;&amp; !this.boxVisible) {
+</span><span style=color:#e6db74>					return
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>				// 禁止拖动
+</span><span style=color:#e6db74>				this.dragging = false;
+</span><span style=color:#e6db74>				if (this.boxId === &#39;activeBox&#39;) {
+</span><span style=color:#e6db74>					if (this.$refs.box) {
+</span><span style=color:#e6db74>						this.boxId = &#39;changeBox&#39;
+</span><span style=color:#e6db74>						if (this.$refs.box.offsetWidth &lt; 3 || this.$refs.box.offsetHeight &lt; 3) {
+</span><span style=color:#e6db74>							this.boxVisible = false
+</span><span style=color:#e6db74>							this.boxId = &#39;&#39;
+</span><span style=color:#e6db74>						}
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>				} else {
+</span><span style=color:#e6db74>					if (this.$refs.box &amp;&amp; this.boxId === &#39;movingBox&#39;) {
+</span><span style=color:#e6db74>						this.boxId = &#39;changeBox&#39;
+</span><span style=color:#e6db74>						if (this.$refs.box.offsetWidth &lt; 3 || this.$refs.box.offsetHeight &lt; 3) {
+</span><span style=color:#e6db74>							this.boxVisible = false
+</span><span style=color:#e6db74>							this.boxId = &#39;&#39;
+</span><span style=color:#e6db74>						}
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>				if (this.boxVisible) {
+</span><span style=color:#e6db74>					this.getHotData()
+</span><span style=color:#e6db74>	
+</span><span style=color:#e6db74>					document.body.style.cursor = &#34;auto&#34;;
+</span><span style=color:#e6db74>					this.obj = null;
+</span><span style=color:#e6db74>					this.markFlag = false
+</span><span style=color:#e6db74>				} else {
+</span><span style=color:#e6db74>					this.markFlag = true
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			getHotData() {
+</span><span style=color:#e6db74>				let target = this.$refs.box
+</span><span style=color:#e6db74>				if (target) {
+</span><span style=color:#e6db74>					let {
+</span><span style=color:#e6db74>						offsetTop,
+</span><span style=color:#e6db74>						offsetLeft
+</span><span style=color:#e6db74>					} = target
+</span><span style=color:#e6db74>					let {
+</span><span style=color:#e6db74>						width: WIDTH,
+</span><span style=color:#e6db74>						height: HEIGHT
+</span><span style=color:#e6db74>					} = this.backImgRect
+</span><span style=color:#e6db74>					let {
+</span><span style=color:#e6db74>						width,
+</span><span style=color:#e6db74>						height
+</span><span style=color:#e6db74>					} = target.getBoundingClientRect()
+</span><span style=color:#e6db74>					// 矩形区域 角点位置（百分比）
+</span><span style=color:#e6db74>					let data = [
+</span><span style=color:#e6db74>						[this.toFixed6(offsetLeft, WIDTH), this.toFixed6(offsetTop, HEIGHT)],
+</span><span style=color:#e6db74>						[this.toFixed6(offsetLeft + width, WIDTH), this.toFixed6(offsetTop, HEIGHT)],
+</span><span style=color:#e6db74>						[this.toFixed6(offsetLeft + width, WIDTH), this.toFixed6(offsetTop + height, HEIGHT)],
+</span><span style=color:#e6db74>						[this.toFixed6(offsetLeft, WIDTH), this.toFixed6(offsetTop + height, HEIGHT)]
+</span><span style=color:#e6db74>					]
+</span><span style=color:#e6db74>					// 矩形中点
+</span><span style=color:#e6db74>					let centerPoint = [
+</span><span style=color:#e6db74>						this.toFixed6(offsetLeft + 0.5 * width, WIDTH),
+</span><span style=color:#e6db74>						this.toFixed6(offsetTop + 0.5 * height, HEIGHT)
+</span><span style=color:#e6db74>					]
+</span><span style=color:#e6db74>					let hotData = {
+</span><span style=color:#e6db74>						data,
+</span><span style=color:#e6db74>						centerPoint
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>					console.log(&#34;getHotData -&gt; hotData&#34;, hotData)
+</span><span style=color:#e6db74>					console.log(JSON.stringify(hotData));
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			toFixed6(v1, v2) {
+</span><span style=color:#e6db74>				return (v1 / v2).toFixed(6)
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			move(type, location, tarobj) {
+</span><span style=color:#e6db74>				switch (type) {
+</span><span style=color:#e6db74>					case &#39;n&#39;: {
+</span><span style=color:#e6db74>						let add_length = this.clickY - location.y;
+</span><span style=color:#e6db74>						this.clickY = location.y;
+</span><span style=color:#e6db74>						let length = parseInt(tarobj.style.height) + add_length;
+</span><span style=color:#e6db74>						tarobj.style.height = length + &#34;px&#34;;
+</span><span style=color:#e6db74>						let realTop = this.clickY &gt; 0 ? this.clickY : 0
+</span><span style=color:#e6db74>						let maxTop = this.backImgRect.height - parseInt(tarobj.style.height)
+</span><span style=color:#e6db74>						realTop = realTop &gt;= maxTop ? maxTop : realTop
+</span><span style=color:#e6db74>						tarobj.style.top = realTop + &#34;px&#34;;
+</span><span style=color:#e6db74>						break;
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>					case &#39;s&#39;: {
+</span><span style=color:#e6db74>						let add_length = this.clickY - location.y;
+</span><span style=color:#e6db74>						this.clickY = location.y;
+</span><span style=color:#e6db74>						let length = parseInt(tarobj.style.height) - add_length;
+</span><span style=color:#e6db74>						let maxHeight = this.backImgRect.height - parseInt(tarobj.style.top)
+</span><span style=color:#e6db74>						let realHeight = length &gt; maxHeight ? maxHeight : length
+</span><span style=color:#e6db74>						tarobj.style.height = realHeight + &#34;px&#34;;
+</span><span style=color:#e6db74>						break;
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>					case &#39;w&#39;: {
+</span><span style=color:#e6db74>						var add_length = this.clickX - location.x;
+</span><span style=color:#e6db74>						this.clickX = location.x;
+</span><span style=color:#e6db74>						let length = parseInt(tarobj.style.width) + add_length;
+</span><span style=color:#e6db74>						tarobj.style.width = length + &#34;px&#34;;
+</span><span style=color:#e6db74>						let realLeft = this.clickX &gt; 0 ? this.clickX : 0
+</span><span style=color:#e6db74>						let maxLeft = this.backImgRect.width - parseInt(tarobj.style.width)
+</span><span style=color:#e6db74>						realLeft = realLeft &gt;= maxLeft ? maxLeft : realLeft
+</span><span style=color:#e6db74>						tarobj.style.left = realLeft + &#34;px&#34;;
+</span><span style=color:#e6db74>						break;
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>					case &#39;e&#39;: {
+</span><span style=color:#e6db74>						let add_length = this.clickX - location.x;
+</span><span style=color:#e6db74>						this.clickX = location.x;
+</span><span style=color:#e6db74>						let length = parseInt(tarobj.style.width) - add_length;
+</span><span style=color:#e6db74>						let maxWidth = this.backImgRect.width - parseInt(tarobj.style.left)
+</span><span style=color:#e6db74>						let realWidth = length &gt; maxWidth ? maxWidth : length
+</span><span style=color:#e6db74>						tarobj.style.width = realWidth + &#34;px&#34;;
+</span><span style=color:#e6db74>						break;
+</span><span style=color:#e6db74>					}
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			onUpleftbtn(e) {
+</span><span style=color:#e6db74>				e.stopPropagation();
+</span><span style=color:#e6db74>				this.onDragDown(e, &#34;nw&#34;);
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			onUpRightbtn(e) {
+</span><span style=color:#e6db74>				e.stopPropagation();
+</span><span style=color:#e6db74>				this.onDragDown(e, &#34;ne&#34;);
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			onDownleftbtn(e) {
+</span><span style=color:#e6db74>				e.stopPropagation();
+</span><span style=color:#e6db74>				this.onDragDown(e, &#34;sw&#34;);
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			onDownRightbtn(e) {
+</span><span style=color:#e6db74>				e.stopPropagation();
+</span><span style=color:#e6db74>				this.onDragDown(e, &#34;se&#34;);
+</span><span style=color:#e6db74>			},
+</span><span style=color:#e6db74>			onDragDown(e, type) {
+</span><span style=color:#e6db74>				e = e || window.event;
+</span><span style=color:#e6db74>				this.clickX = e.x || e.offsetX;
+</span><span style=color:#e6db74>				this.clickY = e.y || e.offsetY;
+</span><span style=color:#e6db74>				this.obj = window;
+</span><span style=color:#e6db74>				this.obj.operateType = type;
+</span><span style=color:#e6db74>				this.box = this.$refs.box;
+</span><span style=color:#e6db74>				return false;
+</span><span style=color:#e6db74>			}
+</span><span style=color:#e6db74>		},
+</span><span style=color:#e6db74>	}
+</span><span style=color:#e6db74>&lt;/script&gt;
+</span><span style=color:#e6db74>
+</span><span style=color:#e6db74>&lt;style lang=&#34;less&#34; scoped&gt;
+</span><span style=color:#e6db74>	.rectangle-marker {
+</span><span style=color:#e6db74>		width: 100%;
+</span><span style=color:#e6db74>		height: 100%;
+</span><span style=color:#e6db74>		display: flex;
+</span><span style=color:#e6db74>		flex-direction: column;
+</span><span style=color:#e6db74>		align-items: center;
+</span><span style=color:#e6db74>		.mark-wrap {
+</span><span style=color:#e6db74>			position: relative;
+</span><span style=color:#e6db74>			.img-responsive {
+</span><span style=color:#e6db74>				display: inline-block;
+</span><span style=color:#e6db74>				max-width: 100%;
+</span><span style=color:#e6db74>				max-height: 100%;
+</span><span style=color:#e6db74>			}
+</span><span style=color:#e6db74>			.draw-rect {
+</span><span style=color:#e6db74>				position: absolute;
+</span><span style=color:#e6db74>				top: 0;
+</span><span style=color:#e6db74>				left: 0;
+</span><span style=color:#e6db74>				bottom: 0;
+</span><span style=color:#e6db74>				right: 0;
+</span><span style=color:#e6db74>				width: 100%;
+</span><span style=color:#e6db74>				height: 100%;
+</span><span style=color:#e6db74>				z-index: 99;
+</span><span style=color:#e6db74>				user-select: none;
+</span><span style=color:#e6db74>				&amp;.no-event {
+</span><span style=color:#e6db74>					pointer-events: none;
+</span><span style=color:#e6db74>				}
+</span><span style=color:#e6db74>			}
+</span><span style=color:#e6db74>		}
+</span><span style=color:#e6db74>		.act-box {
+</span><span style=color:#e6db74>			margin-top: 10px;
+</span><span style=color:#e6db74>			display: flex;
+</span><span style=color:#e6db74>		}
+</span><span style=color:#e6db74>		.act-btns {
+</span><span style=color:#e6db74>			position: absolute;
+</span><span style=color:#e6db74>			right: 0;
+</span><span style=color:#e6db74>			top: 0;
+</span><span style=color:#e6db74>			z-index: 199;
+</span><span style=color:#e6db74>			padding: 0 10px;
+</span><span style=color:#e6db74>			height: 40px;
+</span><span style=color:#e6db74>			width: 100px;
+</span><span style=color:#e6db74>			display: flex;
+</span><span style=color:#e6db74>			align-items: center;
+</span><span style=color:#e6db74>			justify-content: center;
+</span><span style=color:#e6db74>		}
+</span><span style=color:#e6db74>		.fade-enter-active {
+</span><span style=color:#e6db74>			animation: hide-and-show .5s;
+</span><span style=color:#e6db74>		}
+</span><span style=color:#e6db74>		.fade-leave-active {
+</span><span style=color:#e6db74>			animation: hide-and-show .5s reverse;
+</span><span style=color:#e6db74>		}
+</span><span style=color:#e6db74>		@keyframes hide-and-show {
+</span><span style=color:#e6db74>			0% {
+</span><span style=color:#e6db74>				opacity: 0;
+</span><span style=color:#e6db74>			}
+</span><span style=color:#e6db74>			100% {
+</span><span style=color:#e6db74>				opacity: 1;
+</span><span style=color:#e6db74>			}
+</span><span style=color:#e6db74>		}
+</span><span style=color:#e6db74>	}
+</span><span style=color:#e6db74>&lt;/style&gt;
+</span><span style=color:#e6db74>
+</span><span style=color:#e6db74>&lt;style lang=&#34;less&#34;</span>&gt;
+	<span style=color:#a6e22e>.rectangle</span><span style=color:#f92672>-marker</span> {
+		<span style=color:#a6e22e>.box</span> {
+			<span style=color:#a6e22e>position</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>absolute</span><span style=color:#960050;background-color:#1e0010>;</span>
+			<span style=color:#a6e22e>width</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>0px</span><span style=color:#960050;background-color:#1e0010>;</span>
+			<span style=color:#a6e22e>height</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>0px</span><span style=color:#960050;background-color:#1e0010>;</span>
+			<span style=color:#a6e22e>opacity</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>0.5</span><span style=color:#960050;background-color:#1e0010>;</span>
+			<span style=color:#a6e22e>z</span><span style=color:#f92672>-index</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>149</span><span style=color:#960050;background-color:#1e0010>;</span>
+			<span style=color:#a6e22e>cursor</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>move</span><span style=color:#960050;background-color:#1e0010>;</span>
+			<span style=color:#a6e22e>border</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>1px</span> <span style=color:#a6e22e>solid</span> <span style=color:#960050;background-color:#1e0010>#</span><span style=color:#a6e22e>f00</span><span style=color:#960050;background-color:#1e0010>;</span>
+			<span style=color:#a6e22e>.upleftbtn</span><span style=color:#960050;background-color:#1e0010>,</span>
+			<span style=color:#a6e22e>.uprightbtn</span><span style=color:#960050;background-color:#1e0010>,</span>
+			<span style=color:#a6e22e>.downleftbtn</span><span style=color:#960050;background-color:#1e0010>,</span>
+			<span style=color:#a6e22e>.downrightbtn</span> {
+				<span style=color:#a6e22e>width</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>10px</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>height</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>10px</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>border</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>1px</span> <span style=color:#a6e22e>solid</span> <span style=color:#a6e22e>steelblue</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>position</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>absolute</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>z</span><span style=color:#f92672>-index</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>5</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>background</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>whitesmoke</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>border</span><span style=color:#f92672>-radius</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>10px</span><span style=color:#960050;background-color:#1e0010>;</span>
+			}
+			<span style=color:#a6e22e>.upleftbtn</span> {
+				<span style=color:#a6e22e>top</span><span style=color:#f92672>:</span> <span style=color:#f92672>-5px</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>left</span><span style=color:#f92672>:</span> <span style=color:#f92672>-5px</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>cursor</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>nw</span><span style=color:#f92672>-resize</span><span style=color:#960050;background-color:#1e0010>;</span>
+			}
+			<span style=color:#a6e22e>.uprightbtn</span> {
+				<span style=color:#a6e22e>top</span><span style=color:#f92672>:</span> <span style=color:#f92672>-5px</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>right</span><span style=color:#f92672>:</span> <span style=color:#f92672>-5px</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>cursor</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>ne</span><span style=color:#f92672>-resize</span><span style=color:#960050;background-color:#1e0010>;</span>
+			}
+			<span style=color:#a6e22e>.downleftbtn</span> {
+				<span style=color:#a6e22e>left</span><span style=color:#f92672>:</span> <span style=color:#f92672>-5px</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>bottom</span><span style=color:#f92672>:</span> <span style=color:#f92672>-5px</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>cursor</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>sw</span><span style=color:#f92672>-resize</span><span style=color:#960050;background-color:#1e0010>;</span>
+			}
+			<span style=color:#a6e22e>.downrightbtn</span> {
+				<span style=color:#a6e22e>right</span><span style=color:#f92672>:</span> <span style=color:#f92672>-5px</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>bottom</span><span style=color:#f92672>:</span> <span style=color:#f92672>-5px</span><span style=color:#960050;background-color:#1e0010>;</span>
+				<span style=color:#a6e22e>cursor</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>se</span><span style=color:#f92672>-resize</span><span style=color:#960050;background-color:#1e0010>;</span>
+			}
+		}
+	}
+&lt;/<span style=color:#f92672>style</span>&gt;
+</code></pre></div><ol><li>背景图传入，图片自适应处理。</li><li>定义drag标记为，添加开始标记、重置按钮。</li><li>创建box区域，不同状态（change、moving、active），对应不同id。</li><li>box可移动距离，计算边界。</li><li>四角放大缩小的功能。</li><li>生成结果，精确到6位小数，这样可以使得复原标记区域的时候误差最小。</li></ol><h4 id=四觉得有帮助的麻烦给个赞哦谢谢>四、觉得有帮助的，麻烦给个赞哦，谢谢！</h4><a href=/>>> Home</a></main></div><footer><script>(function(){function center_el(tagName){var tags=document.getElementsByTagName(tagName),i,tag;for(i=0;i<tags.length;i++){tag=tags[i];var parent=tag.parentElement;if(parent.childNodes.length===1){if(parent.nodeName==='A'){parent=parent.parentElement;if(parent.childNodes.length!=1)continue;}
+if(parent.nodeName==='P')parent.style.textAlign='center';}}}
+var tagNames=['img','embed','object'];for(var i=0;i<tagNames.length;i++){center_el(tagNames[i]);}})();</script><hr>公众号: KeepinJS | <a href=mailto:472849306@qq.com>Email</a></footer></body></html>
