@@ -1,0 +1,392 @@
+<!doctype html><html lang=en-us><head><link rel=stylesheet href=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css><script src=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=manifest href=/images/site.webmanifest><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A simple, minimal blog for those who love text."><title>深入理解TypeScript——文档篇之类型高级类型 | hackftz</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=https://hackftz.github.io/css/theme-override.css><header><nav><ul><li class=pull-left><a href=https://hackftz.github.io/>~/hackftz</a></li><li class=pull-left><a href=/categories/>~/categories</a></li><li class=pull-left><a href=/tags/>~/tags</a></li><li class=pull-right><a href=https://github.com/hackftz>~/github</a></li></ul></nav></header></head><body><br><div class=article-meta><h1><span class=title>深入理解TypeScript——文档篇之类型高级类型</span></h1><h2 class=author>hackftz</h2><h2 class=date>2020/10/28</h2><p class=terms>Categories: <a href=/categories/vue>Vue</a>
+Tags: <a href=/tags/2020-10>2020-10</a></p></div><div class=content-wrapper><main><h4 id=一交叉类型>一、交叉类型</h4><p>交叉类型是将多个类型合并为一个类型。 这让我们可以把现有的多种类型叠加到一起成为一种类型，它包含了所需的所有类型的特性。</p><h4 id=二联合类型>二、联合类型</h4><p>联合类型表示一个值可以是几种类型之一。 我们用竖线（ |）分隔每个类型，所以 number | string | boolean表示一个值可以是 number， string，或 boolean。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#75715e>/**
+</span><span style=color:#75715e> * Takes a string and adds &#34;padding&#34; to the left.
+</span><span style=color:#75715e> * If &#39;padding&#39; is a string, then &#39;padding&#39; is appended to the left side.
+</span><span style=color:#75715e> * If &#39;padding&#39; is a number, then that number of spaces is added to the left side.
+</span><span style=color:#75715e> */</span>
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>padLeft</span>(<span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>padding</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>|</span> <span style=color:#66d9ef>number</span>) {
+    <span style=color:#75715e>// ...
+</span><span style=color:#75715e></span>}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>indentedString</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>padLeft</span>(<span style=color:#e6db74>&#34;Hello world&#34;</span>, <span style=color:#66d9ef>true</span>); 
+</code></pre></div><p>如果一个值是联合类型，我们只能访问此联合类型的所有类型里共有的成员。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Bird</span> {
+    <span style=color:#a6e22e>fly</span>();
+    <span style=color:#a6e22e>layEggs</span>();
+}
+
+<span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Fish</span> {
+    <span style=color:#a6e22e>swim</span>();
+    <span style=color:#a6e22e>layEggs</span>();
+}
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>getSmallPet</span>()<span style=color:#f92672>:</span> <span style=color:#a6e22e>Fish</span> <span style=color:#f92672>|</span> <span style=color:#a6e22e>Bird</span> {
+    <span style=color:#75715e>// ...
+</span><span style=color:#75715e></span>}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>pet</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>getSmallPet</span>();
+<span style=color:#a6e22e>pet</span>.<span style=color:#a6e22e>layEggs</span>(); <span style=color:#75715e>// okay
+</span><span style=color:#75715e></span><span style=color:#a6e22e>pet</span>.<span style=color:#a6e22e>swim</span>();    <span style=color:#75715e>// 类型“Bird | Fish”上不存在属性“swim”。类型“Bird”上不存在属性“swim”。
+</span></code></pre></div><h4 id=三类型保护与区分类型>三、类型保护与区分类型</h4><ol><li>检查成员是否存在，并且只能访问联合类型中共同拥有的成员。</li></ol><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>pet</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>getSmallPet</span>();
+
+<span style=color:#75715e>// 每一个成员访问都会报错
+</span><span style=color:#75715e></span><span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>pet</span>.<span style=color:#a6e22e>swim</span>) {
+    <span style=color:#a6e22e>pet</span>.<span style=color:#a6e22e>swim</span>();
+}
+<span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>pet</span>.<span style=color:#a6e22e>fly</span>) {
+    <span style=color:#a6e22e>pet</span>.<span style=color:#a6e22e>fly</span>();
+}
+</code></pre></div><ol start=2><li>类型断言。</li></ol><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>pet</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>getSmallPet</span>();
+
+<span style=color:#66d9ef>if</span> ((<span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Fish</span><span style=color:#f92672>&gt;</span><span style=color:#a6e22e>pet</span>).<span style=color:#a6e22e>swim</span>) {
+    (<span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Fish</span><span style=color:#f92672>&gt;</span><span style=color:#a6e22e>pet</span>).<span style=color:#a6e22e>swim</span>();
+}
+<span style=color:#66d9ef>else</span> {
+    (<span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Bird</span><span style=color:#f92672>&gt;</span><span style=color:#a6e22e>pet</span>).<span style=color:#a6e22e>fly</span>();
+}
+</code></pre></div><h4 id=四用户自定义的类型保护>四、用户自定义的类型保护</h4><p>类型保护就是一些表达式，它们会在运行时检查以确保在某个作用域里的类型。 要定义一个类型保护，我们只要简单地定义一个函数，它的返回值是一个 类型谓词：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>isFish</span>(<span style=color:#a6e22e>pet</span>: <span style=color:#66d9ef>Fish</span> <span style=color:#f92672>|</span> <span style=color:#a6e22e>Bird</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>pet</span> <span style=color:#a6e22e>is</span> <span style=color:#a6e22e>Fish</span> { <span style=color:#75715e>// &#34;parameterName is Type&#34;: parameterName必须是来自于当前函数签名里的一个参数名。
+</span><span style=color:#75715e></span>    <span style=color:#66d9ef>return</span> (<span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Fish</span><span style=color:#f92672>&gt;</span><span style=color:#a6e22e>pet</span>).<span style=color:#a6e22e>swim</span> <span style=color:#f92672>!==</span> <span style=color:#66d9ef>undefined</span>;
+}
+</code></pre></div><h4 id=五typeof类型保护>五、typeof类型保护</h4><p>我们不必将 typeof x === &ldquo;number"抽象成一个函数，因为TypeScript可以将它识别为一个类型保护。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#75715e>// 使用联合类型
+</span><span style=color:#75715e></span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>isNumber</span>(<span style=color:#a6e22e>x</span>: <span style=color:#66d9ef>any</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>x</span> <span style=color:#a6e22e>is</span> <span style=color:#66d9ef>number</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>typeof</span> <span style=color:#a6e22e>x</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;number&#34;</span>;
+}
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>isString</span>(<span style=color:#a6e22e>x</span>: <span style=color:#66d9ef>any</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>x</span> <span style=color:#a6e22e>is</span> <span style=color:#66d9ef>string</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>typeof</span> <span style=color:#a6e22e>x</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;string&#34;</span>;
+}
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>padLeft</span>(<span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>padding</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>|</span> <span style=color:#66d9ef>number</span>) {
+    <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>isNumber</span>(<span style=color:#a6e22e>padding</span>)) {
+        <span style=color:#66d9ef>return</span> Array(<span style=color:#a6e22e>padding</span> <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>).<span style=color:#a6e22e>join</span>(<span style=color:#e6db74>&#34; &#34;</span>) <span style=color:#f92672>+</span> <span style=color:#a6e22e>value</span>;
+    }
+    <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>isString</span>(<span style=color:#a6e22e>padding</span>)) {
+        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>padding</span> <span style=color:#f92672>+</span> <span style=color:#a6e22e>value</span>;
+    }
+    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> Error(<span style=color:#e6db74>`Expected string or number, got &#39;</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>padding</span><span style=color:#e6db74>}</span><span style=color:#e6db74>&#39;.`</span>);
+}
+
+<span style=color:#75715e>// 使用typeof
+</span><span style=color:#75715e></span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>isNumber</span>(<span style=color:#a6e22e>x</span>: <span style=color:#66d9ef>any</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>x</span> <span style=color:#a6e22e>is</span> <span style=color:#66d9ef>number</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>typeof</span> <span style=color:#a6e22e>x</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;number&#34;</span>;
+}
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>isString</span>(<span style=color:#a6e22e>x</span>: <span style=color:#66d9ef>any</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>x</span> <span style=color:#a6e22e>is</span> <span style=color:#66d9ef>string</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>typeof</span> <span style=color:#a6e22e>x</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;string&#34;</span>;
+}
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>padLeft</span>(<span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>padding</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>|</span> <span style=color:#66d9ef>number</span>) {
+    <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>isNumber</span>(<span style=color:#a6e22e>padding</span>)) {
+        <span style=color:#66d9ef>return</span> Array(<span style=color:#a6e22e>padding</span> <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>).<span style=color:#a6e22e>join</span>(<span style=color:#e6db74>&#34; &#34;</span>) <span style=color:#f92672>+</span> <span style=color:#a6e22e>value</span>;
+    }
+    <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>isString</span>(<span style=color:#a6e22e>padding</span>)) {
+        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>padding</span> <span style=color:#f92672>+</span> <span style=color:#a6e22e>value</span>;
+    }
+    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> Error(<span style=color:#e6db74>`Expected string or number, got &#39;</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>padding</span><span style=color:#e6db74>}</span><span style=color:#e6db74>&#39;.`</span>);
+}
+</code></pre></div><p>typeof类型保护*只有两种形式能被识别： typeof v === &ldquo;typename"和 typeof v !== &ldquo;typename&rdquo;， &ldquo;typename"必须是 &ldquo;number&rdquo;， &ldquo;string&rdquo;， &ldquo;boolean"或 &ldquo;symbol&rdquo;。</p><h4 id=六instanceof类型保护>六、instanceof类型保护</h4><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Padder</span> {
+    <span style=color:#a6e22e>getPaddingString</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SpaceRepeatingPadder</span> <span style=color:#66d9ef>implements</span> <span style=color:#a6e22e>Padder</span> {
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#66d9ef>private</span> <span style=color:#a6e22e>numSpaces</span>: <span style=color:#66d9ef>number</span>) { }
+    <span style=color:#a6e22e>getPaddingString() {</span>
+        <span style=color:#66d9ef>return</span> Array(<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>numSpaces</span> <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>).<span style=color:#a6e22e>join</span>(<span style=color:#e6db74>&#34; &#34;</span>);
+    }
+}
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>StringPadder</span> <span style=color:#66d9ef>implements</span> <span style=color:#a6e22e>Padder</span> {
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#66d9ef>private</span> <span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>string</span>) { }
+    <span style=color:#a6e22e>getPaddingString() {</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>value</span>;
+    }
+}
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>getRandomPadder() {</span>
+    <span style=color:#66d9ef>return</span> Math.<span style=color:#a6e22e>random</span>() <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0.5</span> <span style=color:#f92672>?</span>
+        <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SpaceRepeatingPadder</span>(<span style=color:#ae81ff>4</span>) <span style=color:#f92672>:</span>
+        <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>StringPadder</span>(<span style=color:#e6db74>&#34;  &#34;</span>);
+}
+
+<span style=color:#75715e>// 类型为SpaceRepeatingPadder | StringPadder
+</span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>padder</span>: <span style=color:#66d9ef>Padder</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>getRandomPadder</span>();
+
+<span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>padder</span> <span style=color:#66d9ef>instanceof</span> <span style=color:#a6e22e>SpaceRepeatingPadder</span>) {
+    <span style=color:#a6e22e>padder</span>; <span style=color:#75715e>// 类型细化为&#39;SpaceRepeatingPadder&#39;
+</span><span style=color:#75715e></span>}
+<span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>padder</span> <span style=color:#66d9ef>instanceof</span> <span style=color:#a6e22e>StringPadder</span>) {
+    <span style=color:#a6e22e>padder</span>; <span style=color:#75715e>// 类型细化为&#39;StringPadder&#39;
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>instanceof的右侧要求是一个构造函数，TypeScript将细化为：<br>此构造函数的 prototype属性的类型，如果它的类型不为 any的话
+构造签名所返回的类型的联合</p><h4 id=七可以为null的类型>七、可以为null的类型</h4><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>s</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;foo&#34;</span>; <span style=color:#75715e>// 类型推论为number
+</span><span style=color:#75715e></span><span style=color:#a6e22e>s</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>; <span style=color:#75715e>// 错误, &#39;null&#39;不能赋值给&#39;string&#39;
+</span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>sn</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>|</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;bar&#34;</span>;
+<span style=color:#a6e22e>sn</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>; <span style=color:#75715e>// 可以
+</span><span style=color:#75715e></span>
+<span style=color:#a6e22e>sn</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>undefined</span>; <span style=color:#75715e>// error, &#39;undefined&#39;不能赋值给&#39;string | null&#39;
+</span></code></pre></div><p>TypeScript会把 null和 undefined区别对待。 string | null， string | undefined和 string | undefined | null是不同的类型。</p><h4 id=八可选参数和可选属性>八、可选参数和可选属性</h4><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#75715e>// 可选参数
+</span><span style=color:#75715e></span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>f</span>(<span style=color:#a6e22e>x</span>: <span style=color:#66d9ef>number</span>, <span style=color:#a6e22e>y?</span>: <span style=color:#66d9ef>number</span>) {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>x</span> <span style=color:#f92672>+</span> (<span style=color:#a6e22e>y</span> <span style=color:#f92672>||</span> <span style=color:#ae81ff>0</span>);
+}
+<span style=color:#a6e22e>f</span>(<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>);
+<span style=color:#a6e22e>f</span>(<span style=color:#ae81ff>1</span>);
+<span style=color:#a6e22e>f</span>(<span style=color:#ae81ff>1</span>, <span style=color:#66d9ef>undefined</span>);
+<span style=color:#a6e22e>f</span>(<span style=color:#ae81ff>1</span>, <span style=color:#66d9ef>null</span>); <span style=color:#75715e>// error, &#39;null&#39; is not assignable to &#39;number | undefined&#39;
+</span><span style=color:#75715e></span>
+<span style=color:#75715e>// 可选属性
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>C</span> {
+    <span style=color:#a6e22e>a</span>: <span style=color:#66d9ef>number</span>;
+    <span style=color:#a6e22e>b?</span>: <span style=color:#66d9ef>number</span>;
+}
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>c</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>C</span>();
+<span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>a</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>12</span>;
+<span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>a</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>undefined</span>; <span style=color:#75715e>// error, &#39;undefined&#39; is not assignable to &#39;number&#39;
+</span><span style=color:#75715e></span><span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>b</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>13</span>;
+<span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>b</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>undefined</span>; <span style=color:#75715e>// ok
+</span><span style=color:#75715e></span><span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>b</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>; <span style=color:#75715e>// error, &#39;null&#39; is not assignable to &#39;number | undefined&#39;
+</span></code></pre></div><h4 id=九类型保护和类型断言>九、类型保护和类型断言</h4><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>f</span>(<span style=color:#a6e22e>sn</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>|</span> <span style=color:#66d9ef>null</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
+    <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>sn</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>) {
+        <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;default&#34;</span>;
+    }
+    <span style=color:#66d9ef>else</span> {
+        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>sn</span>;
+    }
+    <span style=color:#75715e>// return sn || &#34;default&#34;;
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>如果编译器不能够去除 null或 undefined，你可以使用类型断言手动去除。 语法是添加 !后缀： identifier!从 identifier的类型里去除了 null和 undefined：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>broken</span>(<span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>|</span> <span style=color:#66d9ef>null</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
+  <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>postfix</span>(<span style=color:#a6e22e>epithet</span>: <span style=color:#66d9ef>string</span>) {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>name</span>.<span style=color:#a6e22e>charAt</span>(<span style=color:#ae81ff>0</span>) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;.  the &#39;</span> <span style=color:#f92672>+</span> <span style=color:#a6e22e>epithet</span>; <span style=color:#75715e>// error, &#39;name&#39; is possibly null
+</span><span style=color:#75715e></span>  }
+  <span style=color:#a6e22e>name</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>name</span> <span style=color:#f92672>||</span> <span style=color:#e6db74>&#34;Bob&#34;</span>;
+  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>postfix</span>(<span style=color:#e6db74>&#34;great&#34;</span>);
+}
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>fixed</span>(<span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>|</span> <span style=color:#66d9ef>null</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
+  <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>postfix</span>(<span style=color:#a6e22e>epithet</span>: <span style=color:#66d9ef>string</span>) {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>name</span><span style=color:#f92672>!</span>.<span style=color:#a6e22e>charAt</span>(<span style=color:#ae81ff>0</span>) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;.  the &#39;</span> <span style=color:#f92672>+</span> <span style=color:#a6e22e>epithet</span>; <span style=color:#75715e>// ok
+</span><span style=color:#75715e></span>  }
+  <span style=color:#a6e22e>name</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>name</span> <span style=color:#f92672>||</span> <span style=color:#e6db74>&#34;Bob&#34;</span>;
+  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>postfix</span>(<span style=color:#e6db74>&#34;great&#34;</span>);
+}
+
+<span style=color:#75715e>// 等同于
+</span><span style=color:#75715e></span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>getName1</span>(<span style=color:#a6e22e>n</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>|</span> (() <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>string</span>))<span style=color:#f92672>:</span> <span style=color:#a6e22e>Name</span> {
+<span style=color:#66d9ef>if</span> (<span style=color:#66d9ef>typeof</span> <span style=color:#a6e22e>n</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#39;string&#39;</span>) {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>n</span>;
+}
+<span style=color:#66d9ef>else</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>n</span>();
+}
+}
+
+<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>res</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>getName</span>(() <span style=color:#f92672>=&gt;</span> <span style=color:#e6db74>&#39;我是天才&#39;</span>)
+</code></pre></div><p>编译器无法去除嵌套函数的null（除非是立即调用的函数表达式）。</p><h4 id=十类型别名>十、类型别名</h4><p>类型别名会给一个类型起个新名字。 类型别名有时和接口很像，但是可以作用于原始值，联合类型，元组以及其它任何你需要手写的类型。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#a6e22e>type</span> <span style=color:#a6e22e>Name</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>string</span>;
+<span style=color:#a6e22e>type</span> <span style=color:#a6e22e>NameResolver</span> <span style=color:#f92672>=</span> () <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>string</span>;
+<span style=color:#a6e22e>type</span> <span style=color:#a6e22e>NameOrResolver</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Name</span> <span style=color:#f92672>|</span> <span style=color:#a6e22e>NameResolver</span>;
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>getName</span>(<span style=color:#a6e22e>n</span>: <span style=color:#66d9ef>NameOrResolver</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Name</span> {
+    <span style=color:#66d9ef>if</span> (<span style=color:#66d9ef>typeof</span> <span style=color:#a6e22e>n</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#39;string&#39;</span>) {
+        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>n</span>;
+    }
+    <span style=color:#66d9ef>else</span> {
+        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>n</span>();
+    }
+}
+</code></pre></div><p>接口 vs 类型别名
+- 接口创建了一个新的名字，可以在其它任何地方使用。
+- 类型别名并不创建新名字—比如，错误信息就不会使用别名。
+- 类型别名不能被 extends和 implements（自己也不能 extends和 implements其它类型）。
+- 无法通过接口来描述一个类型并且需要使用联合类型或元组类型，这时通常会使用类型别名。</p><h4 id=十一字符串字面量类型>十一、字符串字面量类型</h4><p>字符串字面量类型允许你指定字符串必须的固定值。 在实际应用中，字符串字面量类型可以与联合类型，类型保护和类型别名很好的配合。 通过结合使用这些特性，你可以实现类似枚举类型的字符串。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#a6e22e>type</span> <span style=color:#a6e22e>Easing</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;ease-in&#34;</span> <span style=color:#f92672>|</span> <span style=color:#e6db74>&#34;ease-out&#34;</span> <span style=color:#f92672>|</span> <span style=color:#e6db74>&#34;ease-in-out&#34;</span>;
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>UIElement</span> {
+    <span style=color:#a6e22e>animate</span>(<span style=color:#a6e22e>dx</span>: <span style=color:#66d9ef>number</span>, <span style=color:#a6e22e>dy</span>: <span style=color:#66d9ef>number</span>, <span style=color:#a6e22e>easing</span>: <span style=color:#66d9ef>Easing</span>) {
+        <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>easing</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;ease-in&#34;</span>) {
+            <span style=color:#75715e>// ...
+</span><span style=color:#75715e></span>        }
+        <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>easing</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;ease-out&#34;</span>) {
+        }
+        <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>easing</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;ease-in-out&#34;</span>) {
+        }
+        <span style=color:#66d9ef>else</span> {
+            <span style=color:#75715e>// error! should not pass null or undefined.
+</span><span style=color:#75715e></span>        }
+    }
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>button</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>UIElement</span>();
+<span style=color:#a6e22e>button</span>.<span style=color:#a6e22e>animate</span>(<span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>, <span style=color:#e6db74>&#34;ease-in&#34;</span>);
+<span style=color:#a6e22e>button</span>.<span style=color:#a6e22e>animate</span>(<span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>, <span style=color:#e6db74>&#34;uneasy&#34;</span>); <span style=color:#75715e>// error: &#34;uneasy&#34; is not allowed here, Argument of type &#39;&#34;uneasy&#34;&#39; is not assignable to parameter of type &#39;&#34;ease-in&#34; | &#34;ease-out&#34; | &#34;ease-in-out&#34;&#39;
+</span></code></pre></div><h4 id=十二数字字面量类型>十二、数字字面量类型</h4><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>rollDie</span>()<span style=color:#f92672>:</span> <span style=color:#ae81ff>1</span> <span style=color:#f92672>|</span> <span style=color:#ae81ff>2</span> <span style=color:#f92672>|</span> <span style=color:#ae81ff>3</span> <span style=color:#f92672>|</span> <span style=color:#ae81ff>4</span> <span style=color:#f92672>|</span> <span style=color:#ae81ff>5</span> <span style=color:#f92672>|</span> <span style=color:#ae81ff>6</span> {
+    <span style=color:#75715e>// ...
+</span><span style=color:#75715e></span>}
+</code></pre></div><h4 id=十三枚举成员类型>十三、枚举成员类型</h4><h4 id=十四可辨识联合>十四、可辨识联合</h4><p>你可以合并单例类型，联合类型，类型保护和类型别名来创建一个叫做 可辨识联合的高级模式，它也称做 标签联合或 代数数据类型。 可辨识联合在函数式编程很有用处。 一些语言会自动地为你辨识联合；而TypeScript则基于已有的JavaScript模式。 它具有3个要素：</p><ol><li>具有普通的单例类型属性— 可辨识的特征。</li><li>一个类型别名包含了那些类型的联合— 联合。</li><li>此属性上的类型保护。</li></ol><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Square</span> {
+    <span style=color:#a6e22e>kind</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#34;square&#34;</span>; <span style=color:#75715e>// kind属性称做 可辨识的特征 或 标签。
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>size</span>: <span style=color:#66d9ef>number</span>;
+}
+<span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Rectangle</span> {
+    <span style=color:#a6e22e>kind</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#34;rectangle&#34;</span>;
+    <span style=color:#a6e22e>width</span>: <span style=color:#66d9ef>number</span>;
+    <span style=color:#a6e22e>height</span>: <span style=color:#66d9ef>number</span>;
+}
+<span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Circle</span> {
+    <span style=color:#a6e22e>kind</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#34;circle&#34;</span>;
+    <span style=color:#a6e22e>radius</span>: <span style=color:#66d9ef>number</span>;
+}
+</code></pre></div><h6 id=完整性检查>完整性检查</h6><ul><li>首先是启用 &ndash;strictNullChecks并且指定一个返回值类型：</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#a6e22e>type</span> <span style=color:#a6e22e>Shape</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Square</span> <span style=color:#f92672>|</span> <span style=color:#a6e22e>Rectangle</span> <span style=color:#f92672>|</span> <span style=color:#a6e22e>Circle</span>; <span style=color:#75715e>// 定义 可辨识联合
+</span><span style=color:#75715e></span>
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>area</span>(<span style=color:#a6e22e>s</span>: <span style=color:#66d9ef>Shape</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>number</span> { <span style=color:#75715e>// error: returns number | undefined
+</span><span style=color:#75715e></span>    <span style=color:#66d9ef>switch</span> (<span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>kind</span>) {
+        <span style=color:#66d9ef>case</span> <span style=color:#e6db74>&#34;square&#34;</span><span style=color:#f92672>:</span> <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>size</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>size</span>;
+        <span style=color:#66d9ef>case</span> <span style=color:#e6db74>&#34;rectangle&#34;</span><span style=color:#f92672>:</span> <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>height</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>width</span>;
+        <span style=color:#66d9ef>case</span> <span style=color:#e6db74>&#34;circle&#34;</span><span style=color:#f92672>:</span> <span style=color:#66d9ef>return</span> Math.<span style=color:#a6e22e>PI</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>radius</span> <span style=color:#f92672>**</span> <span style=color:#ae81ff>2</span>;
+    }
+}
+</code></pre></div><ul><li>使用 never类型</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>assertNever</span>(<span style=color:#a6e22e>x</span>: <span style=color:#66d9ef>never</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>never</span> {
+    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> Error(<span style=color:#e6db74>&#34;Unexpected object: &#34;</span> <span style=color:#f92672>+</span> <span style=color:#a6e22e>x</span>);
+}
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>area</span>(<span style=color:#a6e22e>s</span>: <span style=color:#66d9ef>Shape</span>) {
+    <span style=color:#66d9ef>switch</span> (<span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>kind</span>) {
+        <span style=color:#66d9ef>case</span> <span style=color:#e6db74>&#34;square&#34;</span><span style=color:#f92672>:</span> <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>size</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>size</span>;
+        <span style=color:#66d9ef>case</span> <span style=color:#e6db74>&#34;rectangle&#34;</span><span style=color:#f92672>:</span> <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>height</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>width</span>;
+        <span style=color:#66d9ef>case</span> <span style=color:#e6db74>&#34;circle&#34;</span><span style=color:#f92672>:</span> <span style=color:#66d9ef>return</span> Math.<span style=color:#a6e22e>PI</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>radius</span> <span style=color:#f92672>**</span> <span style=color:#ae81ff>2</span>;
+        <span style=color:#66d9ef>default</span><span style=color:#f92672>:</span> <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>assertNever</span>(<span style=color:#a6e22e>s</span>); <span style=color:#75715e>// error here if there are missing cases
+</span><span style=color:#75715e></span>    }
+}
+</code></pre></div><h4 id=十五多态的this类型>十五、多态的this类型</h4><p>多态的 this类型表示的是某个包含类或接口的 子类型。 这被称做 F-bounded多态性。 它能很容易的表现连贯接口间的继承，比如。 在计算器的例子里，在每个操作之后都返回 this类型：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#75715e>// 基本计算器
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>BasicCalculator</span> {
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>constructor</span>(<span style=color:#66d9ef>protected</span> <span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>) { }
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>currentValue</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>number</span> {
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>value</span>;
+    }
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>add</span>(<span style=color:#a6e22e>operand</span>: <span style=color:#66d9ef>number</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>this</span> {
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>value</span> <span style=color:#f92672>+=</span> <span style=color:#a6e22e>operand</span>;
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>;
+    }
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>multiply</span>(<span style=color:#a6e22e>operand</span>: <span style=color:#66d9ef>number</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>this</span> {
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>value</span> <span style=color:#f92672>*=</span> <span style=color:#a6e22e>operand</span>;
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>;
+    }
+    <span style=color:#75715e>// ... other operations go here ...
+</span><span style=color:#75715e></span>}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>v</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>BasicCalculator</span>(<span style=color:#ae81ff>2</span>)
+            .<span style=color:#a6e22e>multiply</span>(<span style=color:#ae81ff>5</span>)
+            .<span style=color:#a6e22e>add</span>(<span style=color:#ae81ff>1</span>)
+            .<span style=color:#a6e22e>currentValue</span>();
+            
+<span style=color:#75715e>// 科学计算器
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ScientificCalculator</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>BasicCalculator</span> {
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>value</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>) {
+        <span style=color:#66d9ef>super</span>(<span style=color:#a6e22e>value</span>);
+    }
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>sin() {</span>
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>value</span> <span style=color:#f92672>=</span> Math.<span style=color:#a6e22e>sin</span>(<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>value</span>);
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>;
+    }
+    <span style=color:#75715e>// ... other operations go here ...
+</span><span style=color:#75715e></span>}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>v</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>ScientificCalculator</span>(<span style=color:#ae81ff>2</span>)
+        .<span style=color:#a6e22e>multiply</span>(<span style=color:#ae81ff>5</span>)
+        .<span style=color:#a6e22e>sin</span>()
+        .<span style=color:#a6e22e>add</span>(<span style=color:#ae81ff>1</span>)
+        .<span style=color:#a6e22e>currentValue</span>();
+</code></pre></div><h4 id=十六索引类型>十六、索引类型</h4><p>使用索引类型，编译器就能够检查使用了动态属性名的代码。</p><p>通过 索引类型查询和 索引访问操作符：</p><p>编译器会检查 name是否真的是 Person的一个属性。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#75715e>// keyof T， 索引类型查询操作符。对于任何类型 T， keyof T的结果为 T上已知的公共属性名的联合。
+</span><span style=color:#75715e></span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>pluck</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span>, <span style=color:#a6e22e>K</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>keyof</span> <span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>o</span>: <span style=color:#66d9ef>T</span>, <span style=color:#a6e22e>names</span>: <span style=color:#66d9ef>K</span>[])<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>[<span style=color:#a6e22e>K</span>][] { <span style=color:#75715e>// T[K]， 索引访问操作符。 
+</span><span style=color:#75715e></span>  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>names</span>.<span style=color:#a6e22e>map</span>(<span style=color:#a6e22e>n</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>o</span>[<span style=color:#a6e22e>n</span>]);
+}
+
+<span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Person</span> {
+    <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#a6e22e>age</span>: <span style=color:#66d9ef>number</span>;
+}
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>person</span>: <span style=color:#66d9ef>Person</span> <span style=color:#f92672>=</span> {
+    <span style=color:#a6e22e>name</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;Jarid&#39;</span>,
+    <span style=color:#a6e22e>age</span>: <span style=color:#66d9ef>35</span>
+};
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>strings</span>: <span style=color:#66d9ef>string</span>[] <span style=color:#f92672>=</span> <span style=color:#a6e22e>pluck</span>(<span style=color:#a6e22e>person</span>, [<span style=color:#e6db74>&#39;name&#39;</span>]); <span style=color:#75715e>// ok, string[]
+</span><span style=color:#75715e></span>
+<span style=color:#a6e22e>pluck</span>(<span style=color:#a6e22e>person</span>, [<span style=color:#e6db74>&#39;age&#39;</span>, <span style=color:#e6db74>&#39;unknown&#39;</span>]); <span style=color:#75715e>// error, &#39;unknown&#39; is not in &#39;name&#39; | &#39;age&#39;
+</span></code></pre></div><p>然而，就像索引类型查询一样，你可以在普通的上下文里使用 T[K]，这正是它的强大所在。 你只要确保类型变量 K extends keyof T就可以了。 例如下面 getProperty函数的例子：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>getProperty</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span>, <span style=color:#a6e22e>K</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>keyof</span> <span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>o</span>: <span style=color:#66d9ef>T</span>, <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>K</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>[<span style=color:#a6e22e>K</span>] {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>o</span>[<span style=color:#a6e22e>name</span>]; <span style=color:#75715e>// o[name] is of type T[K]
+</span><span style=color:#75715e></span>}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>getProperty</span>(<span style=color:#a6e22e>person</span>, <span style=color:#e6db74>&#39;name&#39;</span>);
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>age</span>: <span style=color:#66d9ef>number</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>getProperty</span>(<span style=color:#a6e22e>person</span>, <span style=color:#e6db74>&#39;age&#39;</span>);
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>unknown</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>getProperty</span>(<span style=color:#a6e22e>person</span>, <span style=color:#e6db74>&#39;unknown&#39;</span>); <span style=color:#75715e>// error, &#39;unknown&#39; is not in &#39;name&#39; | &#39;age&#39;
+</span></code></pre></div><h6 id=索引类型和字符串索引签名>索引类型和字符串索引签名</h6><p>keyof和 T[K]与字符串索引签名进行交互。 如果你有一个带有字符串索引签名的类型，那么 keyof T会是 string。 并且 T[string]为索引签名的类型：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Map</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span> {
+    [<span style=color:#a6e22e>key</span>: <span style=color:#66d9ef>string</span>]<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>;
+}
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>keys</span>: <span style=color:#66d9ef>keyof</span> <span style=color:#a6e22e>Map</span><span style=color:#f92672>&lt;</span><span style=color:#66d9ef>number</span><span style=color:#f92672>&gt;</span>; <span style=color:#75715e>// string
+</span><span style=color:#75715e></span><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>Map</span><span style=color:#f92672>&lt;</span><span style=color:#66d9ef>number</span><span style=color:#f92672>&gt;</span>[<span style=color:#e6db74>&#39;foo&#39;</span>]; <span style=color:#75715e>// number
+</span></code></pre></div><h4 id=十七映射类型>十七、映射类型</h4><p>TypeScript提供了从旧类型中创建新类型的一种方式 — 映射类型。 在映射类型里，新类型以相同的形式去转换旧类型里每个属性。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>PersonPartial</span> {
+    <span style=color:#a6e22e>name?</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#a6e22e>age?</span>: <span style=color:#66d9ef>number</span>;
+}
+
+<span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>PersonReadonly</span> {
+    <span style=color:#a6e22e>readonly</span> <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#a6e22e>readonly</span> <span style=color:#a6e22e>age</span>: <span style=color:#66d9ef>number</span>;
+}
+
+<span style=color:#a6e22e>type</span> <span style=color:#a6e22e>Readonly</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>=</span> {
+    <span style=color:#a6e22e>readonly</span> [<span style=color:#a6e22e>P</span> <span style=color:#66d9ef>in</span> <span style=color:#a6e22e>keyof</span> <span style=color:#a6e22e>T</span>]<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>[<span style=color:#a6e22e>P</span>];
+}
+
+<span style=color:#a6e22e>type</span> <span style=color:#a6e22e>Partial</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>=</span> {
+    [<span style=color:#a6e22e>P</span> <span style=color:#66d9ef>in</span> <span style=color:#a6e22e>keyof</span> <span style=color:#a6e22e>T</span>]<span style=color:#f92672>?:</span> <span style=color:#a6e22e>T</span>[<span style=color:#a6e22e>P</span>];
+}
+
+<span style=color:#75715e>// 可以令每个属性成为 readonly类型或可选的。
+</span><span style=color:#75715e></span><span style=color:#a6e22e>type</span> <span style=color:#a6e22e>PersonPartial</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Partial</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Person</span><span style=color:#f92672>&gt;</span>; 
+<span style=color:#a6e22e>type</span> <span style=color:#a6e22e>ReadonlyPerson</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Readonly</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Person</span><span style=color:#f92672>&gt;</span>;
+</code></pre></div><p>最简单的映射类型和它的组成部分：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#a6e22e>type</span> <span style=color:#a6e22e>Keys</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;option1&#39;</span> <span style=color:#f92672>|</span> <span style=color:#e6db74>&#39;option2&#39;</span>;
+<span style=color:#a6e22e>type</span> <span style=color:#a6e22e>Flags</span> <span style=color:#f92672>=</span> { [<span style=color:#a6e22e>K</span> <span style=color:#66d9ef>in</span> <span style=color:#a6e22e>Keys</span>]<span style=color:#f92672>:</span> <span style=color:#66d9ef>boolean</span> };
+</code></pre></div><p>它的语法与索引签名的语法类型，内部使用了 for .. in。</p><ul><li>类型变量 K，它会依次绑定到每个属性。</li><li>字符串字面量联合的 Keys，它包含了要迭代的属性名的集合。</li><li>属性的结果类型。</li></ul><p>包装：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Person</span> {
+  <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>;
+}
+
+<span style=color:#a6e22e>type</span> <span style=color:#a6e22e>Proxy</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>=</span> {
+  <span style=color:#a6e22e>get</span>()<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>;
+  <span style=color:#a6e22e>set</span>(<span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span>;
+}
+<span style=color:#a6e22e>type</span> <span style=color:#a6e22e>Person1</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Proxy</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Person</span><span style=color:#f92672>&gt;</span>
+
+<span style=color:#a6e22e>type</span> <span style=color:#a6e22e>Proxify</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>=</span> {
+    [<span style=color:#a6e22e>P</span> <span style=color:#66d9ef>in</span> <span style=color:#a6e22e>keyof</span> <span style=color:#a6e22e>T</span>]<span style=color:#f92672>:</span> <span style=color:#a6e22e>Proxy</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span>[<span style=color:#a6e22e>P</span>]<span style=color:#f92672>&gt;</span>;
+}
+
+<span style=color:#a6e22e>type</span> <span style=color:#a6e22e>Person2</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Proxify</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Person</span><span style=color:#f92672>&gt;</span>
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>proxify</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>o</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Person2</span> {
+  <span style=color:#75715e>// ... wrap proxies ...
+</span><span style=color:#75715e></span>
+  <span style=color:#66d9ef>return</span> {
+    <span style=color:#a6e22e>name</span><span style=color:#f92672>:</span> {
+      <span style=color:#a6e22e>get() {</span> <span style=color:#75715e>// es6 访问器
+</span><span style=color:#75715e></span>        <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#39;hello&#39;</span>
+      },
+
+      <span style=color:#a6e22e>set() {</span>
+
+      }
+    }
+  }
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>props</span>: <span style=color:#66d9ef>Person</span> <span style=color:#f92672>=</span> {
+  <span style=color:#a6e22e>name</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;haha&#39;</span>
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>proxyProps</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>proxify</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Person</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>props</span>);
+
+<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>proxyProps</span>);
+</code></pre></div><p>拆包：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ts data-lang=ts><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>unproxify</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>(<span style=color:#a6e22e>t</span>: <span style=color:#66d9ef>Proxify</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>T</span><span style=color:#f92672>&gt;</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> {
+    <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>result</span> <span style=color:#f92672>=</span> {} <span style=color:#66d9ef>as</span> <span style=color:#a6e22e>T</span>;
+    <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>k</span> <span style=color:#66d9ef>in</span> <span style=color:#a6e22e>t</span>) {
+        <span style=color:#a6e22e>result</span>[<span style=color:#a6e22e>k</span>] <span style=color:#f92672>=</span> <span style=color:#a6e22e>t</span>[<span style=color:#a6e22e>k</span>].<span style=color:#a6e22e>get</span>();
+    }
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>;
+}
+
+<span style=color:#66d9ef>let</span> <span style=color:#a6e22e>originalProps</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>unproxify</span>(<span style=color:#a6e22e>proxyProps</span>); <span style=color:#75715e>// name get, age get...
+</span></code></pre></div><h4 id=十八预定义的有条件类型>十八、预定义的有条件类型</h4><p>Exclude&lt;T, U> &ndash; 从T中剔除可以赋值给U的类型。<br>Extract&lt;T, U> &ndash; 提取T中可以赋值给U的类型。<br>NonNullable &ndash; 从T中剔除null和undefined。<br>ReturnType &ndash; 获取函数返回值类型。<br>InstanceType &ndash; 获取构造函数类型的实例类型。</p><a href=/>>> Home</a></main></div><footer><script>(function(){function center_el(tagName){var tags=document.getElementsByTagName(tagName),i,tag;for(i=0;i<tags.length;i++){tag=tags[i];var parent=tag.parentElement;if(parent.childNodes.length===1){if(parent.nodeName==='A'){parent=parent.parentElement;if(parent.childNodes.length!=1)continue;}
+if(parent.nodeName==='P')parent.style.textAlign='center';}}}
+var tagNames=['img','embed','object'];for(var i=0;i<tagNames.length;i++){center_el(tagNames[i]);}})();</script><hr>公众号: KeepinJS | <a href=mailto:472849306@qq.com>Email</a></footer></body></html>
