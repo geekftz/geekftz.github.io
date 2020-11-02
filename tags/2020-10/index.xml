@@ -23,7 +23,9 @@ let output = identity(&amp;#34;myString&amp;#34;); // type of output will be &am
 function identity&amp;lt;T&amp;gt;(arg: T): T { return arg; } let myIdentity: &amp;lt;T&amp;gt;(arg: T) =&amp;gt; T = identity; 可以使用不同的泛型参数名。
 function identity&amp;lt;T&amp;gt;(arg: T): T { return arg; } let myIdentity: &amp;lt;U&amp;gt;(arg: U) =&amp;gt; U = identity; 使用带有调用签名的对象字面量来定义。</description></item><item><title>深入理解TypeScript——文档篇之类型推断</title><link>https://hackftz.github.io/post/2020/10/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%AD/</link><pubDate>Tue, 13 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%AD/</guid><description>一、基础 TypeScript里，在有些没有明确指出类型的地方，类型推论会帮助提供类型
 let x = 3; // let x: number 二、最佳通用类型 计算通用类型算法会考虑所有的候选类型，并给出一个兼容所有候选类型的类型。
-// demo 1 let x = [0, 1, null, &amp;#39;haha&amp;#39;]; // let x: (string | number | null)[] // demo 2 class Rhino { constructor() { } } class Elephant { constructor() { } } class Snake { constructor() { } } let zoo = [new Rhino(), new Elephant(), new Snake()]; // let zoo: (Rhino | Elephant | Snake)[] 三、上下文类型 TypeScript类型推论也可能按照相反的方向进行。 这被叫做“按上下文归类”。按上下文归类会发生在表达式的类型与所处的位置相关时。</description></item><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2020/10/12/hacker-with-horn/</link><pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/12/hacker-with-horn/</guid><description>深入理解ts语法、用法、源码分析（暂时不用） 深入理解react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡record 打卡 2020-10-28
+// demo 1 let x = [0, 1, null, &amp;#39;haha&amp;#39;]; // let x: (string | number | null)[] // demo 2 class Rhino { constructor() { } } class Elephant { constructor() { } } class Snake { constructor() { } } let zoo = [new Rhino(), new Elephant(), new Snake()]; // let zoo: (Rhino | Elephant | Snake)[] 三、上下文类型 TypeScript类型推论也可能按照相反的方向进行。 这被叫做“按上下文归类”。按上下文归类会发生在表达式的类型与所处的位置相关时。</description></item><item><title>Plan 2020,Oct</title><link>https://hackftz.github.io/post/2020/10/12/hacker-with-horn/</link><pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/12/hacker-with-horn/</guid><description>深入理解ts语法、用法、源码分析（暂时不用） 深入理解react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡record 打卡 2020-10-31
+云服务器zsh配置 （Powerlevel10k theme zsh5.0.2版本未升级到5.1无法使用） 云服务器 防火墙部分端口向外开放 nginx static html 部署 vue-router history mode下 refreseh404的问题解决 2020-10-30
+CentOS 7 下安装 Nginx vm.$slots和vm.$scopedSlots vue 3 推荐使用vm.$scopedSlots来访问作用域（slot-scope）插槽 2020-10-28
 【TypeScript】类型定义文件(*.d.ts) TypeScript声明文件（.d.ts）的使用 2020-10-26
 useMemo和useCallback的使用
 useMemo：
@@ -31,14 +33,7 @@ useMemo：
 个人定义：useMemo是为了减少不必要的重复计算。如果依赖无变化，会使用缓存的值；依赖变化的话，计算执行，并替换缓存值。
 useCallback：
 官方定义：把内联回调函数及依赖项数组作为参数传入 useCallback，它将返回该回调函数的 memoized 版本，该回调函数仅在某个依赖项改变时才会更新。当你把回调函数传递给经过优化的并使用引用相等性去避免非必要渲染（例如 shouldComponentUpdate）的子组件时，它将非常有用。
-个人定义：当你把回调函数传递给经过优化的并使用引用相等性去避免非必要渲染（例如 shouldComponentUpdate）的子组件时，它将非常有用。也就是说父组件传递一个函数给子组件的时候，由于父组件的更新会导致该函数重新生成从而传递给子组件的函数引用发生了变化，这就会导致子组件也会更新，而很多时候子组件的更新是没必要的，所以我们可以通过useCallback来缓存该函数，然后传递给子组件。 上传文件multipart form-data boundary 说明 formdata实现原理（后续梳理，已发博客） 2020-10-25
-useState用法指南
-hooks中useState返回setXXX的用法，一种参数是直接赋值，一种是参数是匿名函数，两种之间的区别是：同步过程下没有区别，异步情况下，由于匿名函数中可以获取到prevXXX，所以可以获取到上一次状态，因此会在倒计时完成时触发一次次更新。
-异步条件下，与 class 组件中的 setState 方法不同，useState 不会自动合并更新对象。 2020-10-24
-useState用法指南
-hooks中useState返回setXXX的用法，一种参数是直接赋值，一种是参数是匿名函数，两种之间的区别是：同步过程下没有区别，异步情况下，由于匿名函数中可以获取到prevXXX，所以可以获取到上一次状态，因此会在倒计时完成时触发一次次更新。 formdata实现原理（前言） 2020-10-21
-React 16 要更改组件的生命周期
-废弃了 componentWillMount，新增了 getDerivedStateFromProps。</description></item><item><title>深入理解TypeScript——文档篇之函数</title><link>https://hackftz.github.io/post/2020/10/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E5%87%BD%E6%95%B0/</link><pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E5%87%BD%E6%95%B0/</guid><description>一、函数类型 定义函数类型
+个人定义：当你把回调函数传递给经过优化的并使用引用相等性去避免非必要渲染（例如 shouldComponentUpdate）的子组件时，它将非常有用。也就是说父组件传递一个函数给子组件的时候，由于父组件的更新会导致该函数重新生成从而传递给子组件的函数引用发生了变化，这就会导致子组件也会更新，而很多时候子组件的更新是没必要的，所以我们可以通过useCallback来缓存该函数，然后传递给子组件。 上传文件multipart form-data boundary 说明 formdata实现原理（后续梳理，已发博客） 2020-10-25</description></item><item><title>深入理解TypeScript——文档篇之函数</title><link>https://hackftz.github.io/post/2020/10/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E5%87%BD%E6%95%B0/</link><pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/10/12/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3typescript%E6%96%87%E6%A1%A3%E7%AF%87%E4%B9%8B%E5%87%BD%E6%95%B0/</guid><description>一、函数类型 定义函数类型
 // 函数式声明 function add(x: number, y: number): number { return x + y; } // 由变量指向的匿名函数 let myAdd = function(x: number, y: number): number { return x + y; }; 完整函数类型
 let myAdd: (x: number, y: number) =&amp;gt; number = function(x: number, y: number): number { return x + y; }; 通常需要将类型抽离成接口，形成规范。
 推断类型
