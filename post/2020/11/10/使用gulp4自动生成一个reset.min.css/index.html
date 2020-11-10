@@ -1,0 +1,149 @@
+<!doctype html><html lang=en-us><head><link rel=stylesheet href=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css><script src=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=manifest href=/images/site.webmanifest><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A simple, minimal blog for those who love text."><title>使用gulp4自动生成一个reset.min.css | hackftz</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=https://hackftz.github.io/css/theme-override.css><header><nav><ul><li class=pull-left><a href=https://hackftz.github.io/>~/hackftz</a></li><li class=pull-left><a href=/categories/>~/categories</a></li><li class=pull-left><a href=/tags/>~/tags</a></li><li class=pull-right><a href=https://github.com/hackftz>~/github</a></li></ul></nav></header></head><body><br><div class=article-meta><h1><span class=title>使用gulp4自动生成一个reset.min.css</span></h1><h2 class=author>hackftz</h2><h2 class=date>2020/11/10</h2><p class=terms>Categories: <a href=/categories/gulp>gulp</a> <a href=/categories/css>css</a>
+Tags: <a href=/tags/2020-11>2020-11</a></p></div><div class=content-wrapper><main><h4 id=一前言>一、前言</h4><p>团队需要开发一个前端开发脚手架，这里我要写一个reset.css文件，方便开发中使用。<br>因为不想只写一个临时文件，所以做成了一个工具。</p><p>好处就是，这样生成的文件可以在大多数项目中通用，可以大大减少css的代码量，提升项目性能。</p><p>项目地址：<a href=https://github.com/hackftz/common-css-bag>common-css-bag</a></p><h4 id=二项目目录>二、项目目录</h4><pre><code>├─ .gitignore
+├─ config
+│  ├─ build.js
+│  ├─ clean.js
+│  ├─ concat.js
+│  └─ watch.js
+├─ dist
+│  ├─ base.min.css
+│  ├─ box.min.css
+│  ├─ flex.min.css
+│  ├─ font.min.css
+│  └─ reset.min.css
+├─ gulpfile.js
+├─ index.css
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ readme.md
+├─ styles
+│  ├─ base.css // 基础reset
+│  ├─ box.css // 容器
+│  ├─ flex.css // flex
+│  └─ font.css // 字体
+├─ test
+│  └─ clean-css.js
+├─ utils
+│  └─ chalkLog.js // 彩色console.log
+└─ yarn.lock // 依赖控制
+</code></pre><h4 id=三逻辑>三、逻辑</h4><p>最终实现就是，定义好src目录下的base、box、flex、font（或更多）css文件，启动gulp命令，在编写src目录下的每个css文件时候，自动去minify（压缩）生成目标*.min.css文件以及concat（合并）源css文件生成reset.min.css文件，并保持监听。</p><h4 id=四代码部分>四、代码部分</h4><p>压缩每个css文件 到dist目录下</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#75715e>// build.js
+</span><span style=color:#75715e></span><span style=color:#66d9ef>const</span> { <span style=color:#a6e22e>src</span>, <span style=color:#a6e22e>dest</span> }  <span style=color:#f92672>=</span> <span style=color:#a6e22e>require</span>(<span style=color:#e6db74>&#39;gulp&#39;</span>);
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>rename</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>require</span>(<span style=color:#e6db74>&#34;gulp-rename&#34;</span>);
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>cleanCSS</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>require</span>(<span style=color:#e6db74>&#39;gulp-clean-css&#39;</span>);
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>chalkLog</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>require</span>(<span style=color:#e6db74>&#39;../utils/chalkLog&#39;</span>);
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>build</span>(<span style=color:#a6e22e>cb</span>) {
+	<span style=color:#a6e22e>chalkLog</span>(<span style=color:#e6db74>&#39;开始压缩...&#39;</span>, <span style=color:#e6db74>&#39;greenBright.bold&#39;</span>);
+
+	<span style=color:#a6e22e>src</span>([<span style=color:#e6db74>&#39;styles/*.css&#39;</span>, <span style=color:#e6db74>&#39;!styles/*.min.css&#39;</span>]) <span style=color:#75715e>// 过滤 *.min.css
+</span><span style=color:#75715e></span>		.<span style=color:#a6e22e>pipe</span>(<span style=color:#a6e22e>rename</span>({
+			<span style=color:#a6e22e>suffix</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;.min&#39;</span>
+		}))
+		.<span style=color:#a6e22e>pipe</span>(<span style=color:#a6e22e>cleanCSS</span>())
+		.<span style=color:#a6e22e>pipe</span>(<span style=color:#a6e22e>dest</span>(<span style=color:#e6db74>&#39;dist&#39;</span>));
+	
+	<span style=color:#a6e22e>chalkLog</span>(<span style=color:#e6db74>&#39;压缩完毕！&#39;</span>, <span style=color:#e6db74>&#39;blueBright.bold&#39;</span>);
+	
+	<span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>cb</span> <span style=color:#f92672>!==</span> <span style=color:#66d9ef>undefined</span>) {
+		<span style=color:#a6e22e>cb</span>()
+	}
+}
+
+<span style=color:#a6e22e>module</span>.<span style=color:#a6e22e>exports</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>build</span>
+</code></pre></div><p>清理dist</p><pre><code>// clean.js
+const { src }  = require('gulp');
+const gulpClean = require('gulp-clean');
+const chalkLog = require('../utils/chalkLog');
+
+function clean(cb) {
+	chalkLog('清理dist文件夹')
+	src('dist/*.css', {
+		read: false
+	})
+		.pipe(gulpClean())
+
+	if (cb !== undefined) {
+		cb()
+	}
+}
+
+module.exports = clean
+</code></pre><p>合并css文件到reset.min.css</p><pre><code>// concat.js
+const { src, dest }  = require('gulp');
+const gulpConcat = require('gulp-concat');
+const cleanCSS = require('gulp-clean-css');
+const chalkLog = require('../utils/chalkLog');
+
+
+function concat(cb) {
+	chalkLog('开始合并文件...', 'greenBright.bold');
+
+	src(['styles/*.css', '!styles/*.min.css']) // 过滤 *.min.css
+		.pipe(gulpConcat('reset.min.css'))
+		.pipe(cleanCSS())
+		.pipe(dest('dist'));
+	
+	chalkLog('合并完毕！', 'blueBright.bold');
+
+	if (cb !== undefined) {
+		cb()
+	}
+}
+
+module.exports = concat
+</code></pre><p>监听文件改动</p><pre><code>// watch.js
+const build = require('./build');
+const chalkLog = require('../utils/chalkLog');
+const gulpWatch = require('gulp-watch');
+const clean = require('./clean');
+const concat = require('./concat');
+
+
+function watch() {
+	chalkLog('开始监听文件...')
+	gulpWatch(['styles/*.css', '!styles/*.min.css'], function(e) {
+		const start = e.path.indexOf('/styles')
+		const path = e.path.slice(start)
+		chalkLog(path + ' ' + e.event, 'redBright.bold')
+
+		clean()
+		build()
+		concat()
+	});
+}
+
+module.exports = watch
+</code></pre><p>集成、导出task<br>执行顺序：clean => build => concat => watch</p><pre><code>// gulpfile.js
+const { series } = require('gulp');
+
+const build = require('./config/build.js')
+const watch = require('./config/watch.js')
+const clean = require('./config/clean.js')
+const concat = require('./config/concat.js')
+
+exports.clean = clean
+exports.watch = watch
+exports.build = build
+exports.concat = concat
+
+exports.default = series(clean, build, concat, watch)
+
+</code></pre><h4 id=五坑点>五、坑点</h4><p>捯饬了差不多一天，gulp4和之前的区别还是有的，也有一些坑点，所以记录下，防止踩坑。</p><ol><li>gulpfile.js文件为导出task文件了，可以看作其是一个集成多个task的核心文件。走gulp命令可以看到如下：</li></ol><pre><code class=language-ssh data-lang=ssh>[17:13:34] Using gulpfile ~/Desktop/Work/cli-reset-css/gulpfile.js
+[17:13:34] Starting 'default'...
+[17:13:34] Starting 'clean'...
+清理dist文件夹
+[17:13:34] Finished 'clean' after 7.83 ms
+[17:13:34] Starting 'build'...
+开始压缩...
+压缩完毕！
+[17:13:34] Finished 'build' after 3.98 ms
+[17:13:34] Starting 'concat'...
+开始合并文件...
+合并完毕！
+[17:13:34] Finished 'concat' after 2.67 ms
+[17:13:34] Starting 'watch'...
+开始监听文件...
+</code></pre><p>会先执行default，接着执行series按顺序来执行task。这里的集成没有像gulp老版本每个任务都要声明一个task name，这里只需要导出执行task的匿名函数即可。</p><ol start=2><li>导出的函数都有一个cb参数，并且在顺序执行中需要让其能够执行，就是有cb即执行，没有cb则不处理，这是一个done function。</li></ol><p><strong>每个任务都需要done才能执行下一个任务</strong>（注意：在这里除了watch不需要，因为不结束）</p><ol start=3><li>gulp官方文档确实有点难懂，在watch()这个api中，就只是描述了它是监听文件，但是没有去告诉怎么去做热更新（持续监听），官方watch()使用只执行了一次watch task就结束了，所以没有采用，这里采用了<strong>gulp-watch</strong>插件来做处理，效果不错。</li></ol><a href=/>>> Home</a></main></div><footer><script>(function(){function center_el(tagName){var tags=document.getElementsByTagName(tagName),i,tag;for(i=0;i<tags.length;i++){tag=tags[i];var parent=tag.parentElement;if(parent.childNodes.length===1){if(parent.nodeName==='A'){parent=parent.parentElement;if(parent.childNodes.length!=1)continue;}
+if(parent.nodeName==='P')parent.style.textAlign='center';}}}
+var tagNames=['img','embed','object'];for(var i=0;i<tagNames.length;i++){center_el(tagNames[i]);}})();</script><hr>公众号: KeepinJS | <a href=mailto:472849306@qq.com>Email</a></footer></body></html>

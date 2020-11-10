@@ -1,0 +1,57 @@
+<!doctype html><html lang=en-us><head><link rel=stylesheet href=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css><script src=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=manifest href=/images/site.webmanifest><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A simple, minimal blog for those who love text."><title>vue为什么一定要在数组对象上绑定唯一key值？ | hackftz</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=https://hackftz.github.io/css/theme-override.css><header><nav><ul><li class=pull-left><a href=https://hackftz.github.io/>~/hackftz</a></li><li class=pull-left><a href=/categories/>~/categories</a></li><li class=pull-left><a href=/tags/>~/tags</a></li><li class=pull-right><a href=https://github.com/hackftz>~/github</a></li></ul></nav></header></head><body><br><div class=article-meta><h1><span class=title>vue为什么一定要在数组对象上绑定唯一key值？</span></h1><h2 class=author>hackftz</h2><h2 class=date>2020/11/10</h2><p class=terms>Categories: <a href=/categories/vue>vue</a>
+Tags: <a href=/tags/2020-11>2020-11</a></p></div><div class=content-wrapper><main><h4 id=一前言>一、前言</h4><p>我们在使用vue开发时，经常会用到table、select options等组件，vue插件经常会提示我们在使用v-for遍历数组对象的时候要给template dom绑定key值。大多数人知道这个会提升性能，到底是什么性能呢？请往下看</p><h4 id=二官方解释>二、官方解释</h4><p>vue官方文档对key值的描述是这样的：</p><p>当 Vue 正在更新使用 <strong>v-for</strong> 渲染的元素列表时，它默认使用“就地更新”的策略。如果数据项的顺序被改变，Vue 将不会移动 DOM 元素来匹配数据项的顺序，而是就地更新每个元素，并且确保它们在每个索引位置正确渲染。这个类似 Vue 1.x 的 track-by="$index&rdquo;。</p><p>这个默认的模式是高效的，但是只适用于不依赖子组件状态或临时 DOM 状态 (例如：表单输入值) 的列表渲染输出。</p><p>为了给 Vue 一个提示，以便它能跟踪每个节点的身份，从而重用和重新排序现有元素，你需要为每项提供一个唯一<strong>key attribute</strong>：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>v-for</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;item in items&#34;</span> <span style=color:#a6e22e>v-bind:key</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;item.id&#34;</span>&gt; // id不可重复且唯一
+  <span style=color:#75715e>&lt;!-- 内容 --&gt;</span>
+&lt;/<span style=color:#f92672>div</span>&gt;
+</code></pre></div><h4 id=三key作用>三、key作用</h4><p><strong>key</strong>值可赋值为：number | string | boolean (2.4.2 新增) | symbol (2.5.12 新增)</p><p>dom diff为vue2.0新增的 性能优化点。</p><p>key 的特殊 attribute 主要用在 Vue 的<strong>虚拟 DOM 算法</strong>，在新旧 nodes 对比时辨识 VNodes。如果不使用 key，Vue 会使用一种最大限度减少动态元素并且尽可能的尝试就地修改/复用相同类型元素的算法。而使用 key 时，它会基于 key 的变化重新排列元素顺序，并且会移除 key 不存在的元素。</p><h4 id=四解析>四、解析</h4><p>首先，这个<strong>虚拟 DOM 算法</strong>是将VNode旧值和新值放在一起比对，感兴趣的同学可以去看看这篇文章<a href=https://www.cnblogs.com/wind-lanyan/p/9061684.html>详解vue的diff算法</a>，写的是非常好的。<br>但是diff算法不是我这次要说的重点，重点是数组修改时触发的事件。<br>因为vue2.0数据绑定更新的方法是通过Object.defineProperty()设置get、set方法来实现的。<br>那么如果对数组设置呢？
+跑下代码测试一下：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-javascript data-lang=javascript><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>arr</span> <span style=color:#f92672>=</span> [
+	<span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>
+]
+
+Object.<span style=color:#a6e22e>defineProperty</span>(<span style=color:#a6e22e>arr</span>, <span style=color:#e6db74>&#34;0&#34;</span>, {
+  <span style=color:#a6e22e>get</span>() {
+		<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;get 0&#39;</span>);
+		<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_0</span> <span style=color:#f92672>||</span> <span style=color:#ae81ff>0</span>; 
+	},
+  <span style=color:#a6e22e>set</span>(<span style=color:#a6e22e>newValue</span>) {
+		<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;set 0&#39;</span>);
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_0</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>newValue</span>; 
+	},
+  <span style=color:#a6e22e>enumerable</span> <span style=color:#f92672>:</span> <span style=color:#66d9ef>true</span>,
+  <span style=color:#a6e22e>configurable</span> <span style=color:#f92672>:</span> <span style=color:#66d9ef>true</span>
+});
+
+Object.<span style=color:#a6e22e>defineProperty</span>(<span style=color:#a6e22e>arr</span>, <span style=color:#e6db74>&#34;1&#34;</span>, {
+  <span style=color:#a6e22e>get</span>() {
+		<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;get 1&#39;</span>);
+		<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_1</span> <span style=color:#f92672>||</span> <span style=color:#ae81ff>1</span>; 
+	},
+  <span style=color:#a6e22e>set</span>(<span style=color:#a6e22e>newValue</span>) {
+		<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;set 1&#39;</span>);
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_1</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>newValue</span>; 
+	},
+  <span style=color:#a6e22e>enumerable</span> <span style=color:#f92672>:</span> <span style=color:#66d9ef>true</span>,
+  <span style=color:#a6e22e>configurable</span> <span style=color:#f92672>:</span> <span style=color:#66d9ef>true</span>
+});
+
+Object.<span style=color:#a6e22e>defineProperty</span>(<span style=color:#a6e22e>arr</span>, <span style=color:#e6db74>&#34;2&#34;</span>, {
+  <span style=color:#a6e22e>get</span>() {
+		<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;get 2&#39;</span>);
+		<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_2</span> <span style=color:#f92672>||</span> <span style=color:#ae81ff>2</span>; 
+	},
+  <span style=color:#a6e22e>set</span>(<span style=color:#a6e22e>newValue</span>) { 
+		<span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;set 2&#39;</span>);
+		<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_2</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>newValue</span>; 
+	},
+  <span style=color:#a6e22e>enumerable</span> <span style=color:#f92672>:</span> <span style=color:#66d9ef>true</span>,
+  <span style=color:#a6e22e>configurable</span> <span style=color:#f92672>:</span> <span style=color:#66d9ef>true</span>
+});
+
+<span style=color:#75715e>// console
+</span><span style=color:#75715e></span><span style=color:#a6e22e>get</span> <span style=color:#ae81ff>2</span>
+<span style=color:#a6e22e>test</span>.<span style=color:#a6e22e>js</span><span style=color:#f92672>:</span><span style=color:#ae81ff>20</span> <span style=color:#a6e22e>get</span> <span style=color:#ae81ff>1</span>
+<span style=color:#a6e22e>test</span>.<span style=color:#a6e22e>js</span><span style=color:#f92672>:</span><span style=color:#ae81ff>37</span> <span style=color:#a6e22e>set</span> <span style=color:#ae81ff>2</span>
+<span style=color:#a6e22e>test</span>.<span style=color:#a6e22e>js</span><span style=color:#f92672>:</span><span style=color:#ae81ff>7</span> <span style=color:#a6e22e>get</span> <span style=color:#ae81ff>0</span>
+<span style=color:#a6e22e>test</span>.<span style=color:#a6e22e>js</span><span style=color:#f92672>:</span><span style=color:#ae81ff>24</span> <span style=color:#a6e22e>set</span> <span style=color:#ae81ff>1</span>
+</code></pre></div><p>通过这个可以看到 由于数组在初始时就绑定了get、set方法，如果直接去做一次插值操作，会对每个属性都做一次卸载、安装的操作，这样在数组数据很大的情况下，是很费性能的。所以vue对此做了diff算法，根据old vdom和new vdom的数据结构来进行对比，通过对比节点类型、子节点值、子children diff、以及使用key来计算出最小的移动方案，从而使对dom的操作达到最小程度，可以大大提升性能。</p><a href=/>>> Home</a></main></div><footer><script>(function(){function center_el(tagName){var tags=document.getElementsByTagName(tagName),i,tag;for(i=0;i<tags.length;i++){tag=tags[i];var parent=tag.parentElement;if(parent.childNodes.length===1){if(parent.nodeName==='A'){parent=parent.parentElement;if(parent.childNodes.length!=1)continue;}
+if(parent.nodeName==='P')parent.style.textAlign='center';}}}
+var tagNames=['img','embed','object'];for(var i=0;i<tagNames.length;i++){center_el(tagNames[i]);}})();</script><hr>公众号: KeepinJS | <a href=mailto:472849306@qq.com>Email</a></footer></body></html>

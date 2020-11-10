@@ -1,0 +1,48 @@
+<!doctype html><html lang=en-us><head><link rel=stylesheet href=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css><script src=//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/images/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/images/favicon-16x16.png><link rel=manifest href=/images/site.webmanifest><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A simple, minimal blog for those who love text."><title>jsx dom嵌套层级太深 compose 组合/简化方法 | hackftz</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css><link rel=stylesheet href=https://hackftz.github.io/css/theme-override.css><header><nav><ul><li class=pull-left><a href=https://hackftz.github.io/>~/hackftz</a></li><li class=pull-left><a href=/categories/>~/categories</a></li><li class=pull-left><a href=/tags/>~/tags</a></li><li class=pull-right><a href=https://github.com/hackftz>~/github</a></li></ul></nav></header></head><body><br><div class=article-meta><h1><span class=title>jsx dom嵌套层级太深 compose 组合/简化方法</span></h1><h2 class=author>hackftz</h2><h2 class=date>2020/11/03</h2><p class=terms>Categories: <a href=/categories/react>react</a>
+Tags: <a href=/tags/2020-11>2020-11</a></p></div><div class=content-wrapper><main><p>摘自<a href=https://mp.weixin.qq.com/s/LG4ZVfvbiB7cxLah3L09Kw>我在 BAT 写 React 是如何进行性能优化的</a></p><h4 id=一前言>一、前言</h4><p>react开发中，组件嵌套太深，怎么组合多个jsx dom的方法</p><h4 id=二>二、</h4><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#75715e>// 嵌套层级太深
+</span><span style=color:#75715e></span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>StateProviders</span> <span style=color:#f92672>=</span> ({ <span style=color:#a6e22e>children</span> }) =&gt; (
+  <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>LogProvider</span><span style=color:#f92672>&gt;</span>
+    <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>UserProvider</span><span style=color:#f92672>&gt;</span>
+      <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>MenuProvider</span><span style=color:#f92672>&gt;</span>
+        <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>AppProvider</span><span style=color:#f92672>&gt;</span>
+          {<span style=color:#a6e22e>children</span>}
+        <span style=color:#f92672>&lt;</span><span style=color:#960050;background-color:#1e0010>/AppProvider&gt;</span>
+      <span style=color:#f92672>&lt;</span><span style=color:#960050;background-color:#1e0010>/MenuProvider&gt;</span>
+    <span style=color:#f92672>&lt;</span><span style=color:#960050;background-color:#1e0010>/UserProvider&gt;</span>
+  <span style=color:#f92672>&lt;</span><span style=color:#960050;background-color:#1e0010>/LogProvider&gt;</span>
+)
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>App</span>() {
+  <span style=color:#66d9ef>return</span> (
+    <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>StateProviders</span><span style=color:#f92672>&gt;</span>
+      <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Main</span> <span style=color:#f92672>/&gt;</span>
+    <span style=color:#f92672>&lt;</span><span style=color:#960050;background-color:#1e0010>/StateProviders&gt;</span>
+  )
+}
+
+<span style=color:#75715e>// 简化
+</span><span style=color:#75715e></span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>composeProviders</span>(...<span style=color:#a6e22e>providers</span>) {
+  <span style=color:#66d9ef>return</span> ({ <span style=color:#a6e22e>children</span> }) =&gt;
+    <span style=color:#a6e22e>providers</span>.<span style=color:#a6e22e>reduce</span>(
+      (<span style=color:#a6e22e>prev</span>, <span style=color:#a6e22e>Provider</span>) =&gt; <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Provider</span><span style=color:#f92672>&gt;</span>{<span style=color:#a6e22e>prev</span>}<span style=color:#f92672>&lt;</span><span style=color:#960050;background-color:#1e0010>/Provider&gt;,</span>
+      <span style=color:#a6e22e>children</span>,
+    )
+}
+
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>StateProviders</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>composeProviders</span>(
+  <span style=color:#a6e22e>LogProvider</span>,
+  <span style=color:#a6e22e>UserProvider</span>,
+  <span style=color:#a6e22e>MenuProvider</span>,
+  <span style=color:#a6e22e>AppProvider</span>,
+)
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>App</span>() {
+  <span style=color:#66d9ef>return</span> (
+    <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>StateProvider</span><span style=color:#f92672>&gt;</span>
+      <span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Main</span> <span style=color:#f92672>/&gt;</span>
+    <span style=color:#f92672>&lt;</span><span style=color:#960050;background-color:#1e0010>/StateProvider&gt;</span>
+  )
+}
+</code></pre></div><a href=/>>> Home</a></main></div><footer><script>(function(){function center_el(tagName){var tags=document.getElementsByTagName(tagName),i,tag;for(i=0;i<tags.length;i++){tag=tags[i];var parent=tag.parentElement;if(parent.childNodes.length===1){if(parent.nodeName==='A'){parent=parent.parentElement;if(parent.childNodes.length!=1)continue;}
+if(parent.nodeName==='P')parent.style.textAlign='center';}}}
+var tagNames=['img','embed','object'];for(var i=0;i<tagNames.length;i++){center_el(tagNames[i]);}})();</script><hr>公众号: KeepinJS | <a href=mailto:472849306@qq.com>Email</a></footer></body></html>
