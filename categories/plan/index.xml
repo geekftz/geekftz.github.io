@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Plan on hackftz</title><link>https://hackftz.github.io/categories/plan/</link><description>Recent content in Plan on hackftz</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 01 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://hackftz.github.io/categories/plan/index.xml" rel="self" type="application/rss+xml"/><item><title>Plan 2020,Nov</title><link>https://hackftz.github.io/post/2020/11/01/hacker-with-horn/</link><pubDate>Sun, 01 Nov 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/11/01/hacker-with-horn/</guid><description>深入理解 ts 语法、用法、源码分析（暂时不用） 深入理解 react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡 record 打卡 2020-11-16
-记自己的 vue vscode autofomat 配置 简洁不复杂 2020-11-11
+[记自己的 vue vscode autofomat 配置 简洁不复杂](https://juejin.im/post/6895553060613914637 React 的 7 种代码异味 2020-11-11
 vue3.0 中使用 postcss-pxtorem 目前比较主流的移动端适配方案 用 commitlint 规范团队的 git 提交信息 使用起来较简单，会根据 commitlint 配置校验提交信息是否符合要求 前端提交信息规范——commitlint 2020-11-10
 详解 vue 的 diff 算法 2020-11-09
 Normalize.css 样式作用，及使用方法 common-css-bag——minify css 工具 2020-11-05
