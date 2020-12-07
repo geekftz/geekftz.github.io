@@ -2,7 +2,7 @@
 测试环境下：dist/index.js
 size gzipped 优化前 32674.98kb 6320.37kb 优化后 6320.37kb 2141.28kb 正式环境下：包含dist/js/chunk-vendors.js 、dist/js/index.js 、dist/css/chunk-vendors.css、dist/css/index.css
 size gzipped 优化前 4757.</description></item><item><title>Plan 2020,Dec</title><link>https://hackftz.github.io/post/2020/12/02/hacker-with-horn/</link><pubDate>Wed, 02 Dec 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/12/02/hacker-with-horn/</guid><description>打卡 深入理解 ts 语法、用法、源码分析（暂时不用） 深入理解 react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡 record 2020-12-7
-一文彻底搞懂前端监控 如何优雅地解决多个 React、Vue App 之间的状态共享？ 2020-12-4
+一文彻底搞懂前端监控 如何优雅地解决多个 React、Vue App 之间的状态共享？ 如何基于 TypeScript 实现控制反转 2020-12-4
 记录一次vuecli3后台管理系统webpack打包优化 2020-12-2
 nvm安装（Mac篇） [node8.11.1环境下 vuecli3 webpack4 构建失败 terser-webpack-plugin/node_modules/p-limit/index.js 文件29行语法校验报错]</description></item><item><title>vue为什么一定要在数组对象上绑定唯一key值？</title><link>https://hackftz.github.io/post/2020/11/10/vue%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%80%E5%AE%9A%E8%A6%81%E5%9C%A8%E6%95%B0%E7%BB%84%E5%AF%B9%E8%B1%A1%E4%B8%8A%E7%BB%91%E5%AE%9A%E5%94%AF%E4%B8%80key%E5%80%BC/</link><pubDate>Tue, 10 Nov 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/11/10/vue%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%80%E5%AE%9A%E8%A6%81%E5%9C%A8%E6%95%B0%E7%BB%84%E5%AF%B9%E8%B1%A1%E4%B8%8A%E7%BB%91%E5%AE%9A%E5%94%AF%E4%B8%80key%E5%80%BC/</guid><description>一、前言 我们在使用vue开发时，经常会用到table、select options等组件，vue插件经常会提示我们在使用v-for遍历数组对象的时候要给template dom绑定key值。大多数人知道这个会提升性能，到底是什么性能呢？请往下看
 二、官方解释 vue官方文档对key值的描述是这样的：

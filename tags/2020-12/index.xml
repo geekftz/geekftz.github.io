@@ -2,6 +2,6 @@
 测试环境下：dist/index.js
 size gzipped 优化前 32674.98kb 6320.37kb 优化后 6320.37kb 2141.28kb 正式环境下：包含dist/js/chunk-vendors.js 、dist/js/index.js 、dist/css/chunk-vendors.css、dist/css/index.css
 size gzipped 优化前 4757.</description></item><item><title>Plan 2020,Dec</title><link>https://hackftz.github.io/post/2020/12/02/hacker-with-horn/</link><pubDate>Wed, 02 Dec 2020 00:00:00 +0000</pubDate><guid>https://hackftz.github.io/post/2020/12/02/hacker-with-horn/</guid><description>打卡 深入理解 ts 语法、用法、源码分析（暂时不用） 深入理解 react 近版本迭代区别以及为何、语法、用法、源码分析 每天阅读至少三篇技术博客 阅读完在这里进行打卡 record 2020-12-7
-一文彻底搞懂前端监控 如何优雅地解决多个 React、Vue App 之间的状态共享？ 2020-12-4
+一文彻底搞懂前端监控 如何优雅地解决多个 React、Vue App 之间的状态共享？ 如何基于 TypeScript 实现控制反转 2020-12-4
 记录一次vuecli3后台管理系统webpack打包优化 2020-12-2
 nvm安装（Mac篇） [node8.11.1环境下 vuecli3 webpack4 构建失败 terser-webpack-plugin/node_modules/p-limit/index.js 文件29行语法校验报错]</description></item></channel></rss>
